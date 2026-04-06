@@ -25,11 +25,11 @@ describe('File Uploads', function () {
         $postFields = $options[CURLOPT_POSTFIELDS] ?? null;
 
         expect(is_array($postFields))->toBeTrue();
-        
+
         $file = $postFields['attachment'];
-        expect($file)->toBeInstanceOf(\CURLFile::class);
-        
-        /** @var \CURLFile $file */
+        expect($file)->toBeInstanceOf(CURLFile::class);
+
+        /** @var CURLFile $file */
         expect($file->getPostFilename())->toBe('custom.txt');
         expect($file->getMimeType())->toBe('text/plain');
     });
@@ -54,8 +54,8 @@ describe('File Uploads', function () {
 
         expect(is_array($postFields))->toBeTrue();
         expect($postFields['field1'])->toBe('value1');
-        
-        expect($postFields['upload'])->toBeInstanceOf(\CURLFile::class);
+
+        expect($postFields['upload'])->toBeInstanceOf(CURLFile::class);
         expect($postFields['upload']->getPostFilename())->toBe('test.txt');
     });
 });
@@ -89,7 +89,7 @@ describe('Proxy Configuration', function () {
         $options = $lastRequest->getOptions();
 
         expect($options[CURLOPT_PROXY])->toBe('socks.example.com:1080');
-        
+
         expect($options[CURLOPT_PROXYTYPE])->toBe(CURLPROXY_SOCKS5_HOSTNAME);
     });
 });

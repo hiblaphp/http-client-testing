@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Hibla\EventLoop\Loop;
 use Hibla\HttpClient\Exceptions\HttpException;
 use Hibla\HttpClient\Exceptions\NetworkException;
 use Hibla\HttpClient\Response;
@@ -16,7 +17,6 @@ use Hibla\HttpClient\Testing\Utilities\Handlers\NetworkSimulationHandler;
 use Hibla\HttpClient\Testing\Utilities\NetworkSimulator;
 use Hibla\HttpClient\ValueObjects\RetryConfig;
 use Psr\Http\Message\StreamInterface;
-use Hibla\EventLoop\Loop;
 
 afterEach(function () {
     Mockery::close();
@@ -30,6 +30,7 @@ function createBaseMock()
     $mock->shouldReceive('getChunkDelay')->andReturn(0.0)->byDefault();
     $mock->shouldReceive('getChunkJitter')->andReturn(0.0)->byDefault();
     $mock->shouldReceive('shouldFail')->andReturn(false)->byDefault();
+
     return $mock;
 }
 
@@ -66,8 +67,9 @@ describe('StandardResponseFactory', function () {
 
         $promise = $factory->create($mock);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class, 'Custom error message');
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class, 'Custom error message')
+        ;
     });
 
     test('handles network failure', function () {
@@ -79,8 +81,9 @@ describe('StandardResponseFactory', function () {
 
         $promise = $factory->create($mock);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class);
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class)
+        ;
     });
 
     test('handles network simulation failure', function () {
@@ -92,8 +95,9 @@ describe('StandardResponseFactory', function () {
 
         $promise = $factory->create($mock);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class);
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class)
+        ;
     });
 
     test('can be cancelled', function () {
@@ -227,7 +231,7 @@ describe('DownloadResponseFactory', function () {
         $destination = $tempDir . '/test.txt';
         $promise = $factory->create($mock, $destination, $fileManager);
 
-        expect(fn() => $promise->wait())->toThrow(NetworkException::class);
+        expect(fn () => $promise->wait())->toThrow(NetworkException::class);
 
         $fileManager->cleanup();
         cleanupTempDir($tempDir);
@@ -248,8 +252,9 @@ describe('DownloadResponseFactory', function () {
         $destination = $tempDir . '/test.txt';
         $promise = $factory->create($mock, $destination, $fileManager);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class, 'Download failed');
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class, 'Download failed')
+        ;
 
         $fileManager->cleanup();
         cleanupTempDir($tempDir);
@@ -320,7 +325,7 @@ describe('StreamingResponseFactory', function () {
         $mock->shouldReceive('getBodySequence')->andReturn([]);
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, null, $createStream);
         $response = $promise->wait();
@@ -348,7 +353,7 @@ describe('StreamingResponseFactory', function () {
         $mock->shouldReceive('getBodySequence')->andReturn(['chunk1', 'chunk2', 'chunk3']);
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, $onChunk, $createStream);
         $promise->wait();
@@ -376,7 +381,7 @@ describe('StreamingResponseFactory', function () {
         $mock->shouldReceive('getBodySequence')->andReturn([]);
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, $onChunk, $createStream);
         $promise->wait();
@@ -394,12 +399,13 @@ describe('StreamingResponseFactory', function () {
         $mock = createBaseMock();
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, null, $createStream);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(HttpException::class);
+        expect(fn () => $promise->wait())
+            ->toThrow(HttpException::class)
+        ;
     });
 
     test('handles mock failure', function () {
@@ -412,12 +418,13 @@ describe('StreamingResponseFactory', function () {
         $mock->shouldReceive('getError')->andReturn('Stream error');
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, null, $createStream);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(HttpException::class, 'Stream error');
+        expect(fn () => $promise->wait())
+            ->toThrow(HttpException::class, 'Stream error')
+        ;
     });
 
     test('can be cancelled', function () {
@@ -429,7 +436,7 @@ describe('StreamingResponseFactory', function () {
         $mock = createBaseMock();
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, null, $createStream);
         $promise->cancel();
@@ -449,7 +456,7 @@ describe('StreamingResponseFactory', function () {
         $mock->shouldReceive('getBodySequence')->andReturn([]);
 
         $stream = Mockery::mock(StreamInterface::class);
-        $createStream = fn($body) => $stream;
+        $createStream = fn ($body) => $stream;
 
         $promise = $factory->create($mock, null, $createStream);
         $response = $promise->wait();
@@ -472,7 +479,7 @@ describe('RetryableResponseFactory', function () {
         $mock->shouldReceive('getHeaders')->andReturn([]);
 
         $retryConfig = new RetryConfig(maxRetries: 3);
-        $mockProvider = fn($attempt) => $mock;
+        $mockProvider = fn ($attempt) => $mock;
 
         $promise = $factory->create($retryConfig, $mockProvider);
         $response = $promise->wait();
@@ -616,8 +623,9 @@ describe('RetryableResponseFactory', function () {
 
         $promise = $factory->create($retryConfig, $mockProvider);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class, 'HTTP Request failed after 4 attempt(s)');
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class, 'HTTP Request failed after 4 attempt(s)')
+        ;
     });
 
     test('does not retry non-retryable errors', function () {
@@ -641,8 +649,9 @@ describe('RetryableResponseFactory', function () {
 
         $promise = $factory->create($retryConfig, $mockProvider);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class, 'HTTP Request failed after 1 attempt(s): Fatal error');
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class, 'HTTP Request failed after 1 attempt(s): Fatal error')
+        ;
     });
 
     test('does not retry non-retryable status codes', function () {
@@ -665,8 +674,9 @@ describe('RetryableResponseFactory', function () {
 
         $promise = $factory->create($retryConfig, $mockProvider);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(NetworkException::class, 'HTTP Request failed after 1 attempt(s): Mock responded with status 404');
+        expect(fn () => $promise->wait())
+            ->toThrow(NetworkException::class, 'HTTP Request failed after 1 attempt(s): Mock responded with status 404')
+        ;
     });
 
     test('can be cancelled during retry', function () {
@@ -741,12 +751,13 @@ describe('RetryableResponseFactory', function () {
         $factory = new RetryableResponseFactory($networkHandler);
 
         $retryConfig = new RetryConfig(maxRetries: 3);
-        $mockProvider = fn($attempt) => throw new Exception('Provider error');
+        $mockProvider = fn ($attempt) => throw new Exception('Provider error');
 
         $promise = $factory->create($retryConfig, $mockProvider);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(Exception::class, 'Mock provider error: Provider error');
+        expect(fn () => $promise->wait())
+            ->toThrow(Exception::class, 'Mock provider error: Provider error')
+        ;
     });
 
     test('handles mock provider returning invalid type', function () {
@@ -755,12 +766,13 @@ describe('RetryableResponseFactory', function () {
         $factory = new RetryableResponseFactory($networkHandler);
 
         $retryConfig = new RetryConfig(maxRetries: 3);
-        $mockProvider = fn($attempt) => 'not a mock';
+        $mockProvider = fn ($attempt) => 'not a mock';
 
         $promise = $factory->create($retryConfig, $mockProvider);
 
-        expect(fn() => $promise->wait())
-            ->toThrow(Exception::class, 'Mock provider must return a MockedRequest instance');
+        expect(fn () => $promise->wait())
+            ->toThrow(Exception::class, 'Mock provider must return a MockedRequest instance')
+        ;
     });
 
     test('retries with retryable network failure', function () {
@@ -777,12 +789,13 @@ describe('RetryableResponseFactory', function () {
 
         $mockProvider = function ($attempt) use (&$attemptCount) {
             $attemptCount++;
+
             return createBaseMock();
         };
 
         $promise = $factory->create($retryConfig, $mockProvider);
 
-        expect(fn() => $promise->wait())
+        expect(fn () => $promise->wait())
             ->toThrow(NetworkException::class)
             ->and($attemptCount)->toBeGreaterThan(1)
         ;

@@ -38,14 +38,16 @@ describe('StreamingResponse Lifecycle Edge Cases', function () {
     test('readLineAsync correctly handles newlines across mock chunks', function () {
         Http::mock('GET')
             ->url('/stream-3')
-            ->respondWithChunks(["First Line\nSec", "ond Line\n", "Third Line"])
-            ->register();
+            ->respondWithChunks(["First Line\nSec", "ond Line\n", 'Third Line'])
+            ->register()
+        ;
 
         $response = Http::stream('/stream-3')->wait();
 
         expect($response->readLineAsync()->wait())->toBe("First Line\n")
             ->and($response->readLineAsync()->wait())->toBe("Second Line\n")
-            ->and($response->readLineAsync()->wait())->toBe("Third Line");
+            ->and($response->readLineAsync()->wait())->toBe('Third Line')
+        ;
     });
 
     test('readAllAsync exhausts the entire mocked stream', function () {
@@ -56,7 +58,8 @@ describe('StreamingResponse Lifecycle Edge Cases', function () {
         $result = $response->readAllAsync()->wait();
 
         expect($result)->toBe($longData)
-            ->and($response->eof())->toBeTrue();
+            ->and($response->eof())->toBeTrue()
+        ;
     });
 
     test('rewind() allows re-reading a mocked stream after partial consumption', function () {
@@ -69,12 +72,12 @@ describe('StreamingResponse Lifecycle Edge Cases', function () {
         expect($response->readAsync(10)->wait())->toBe('0123456789');
     });
 
-     test('string conversion (casting) always returns full body via rewind', function () {
+    test('string conversion (casting) always returns full body via rewind', function () {
         Http::mock('GET')->url('/stream-6')->respondWith('Hello World')->register();
         $response = Http::stream('/stream-6')->wait();
 
-        $response->readAsync(6)->wait(); 
-        
+        $response->readAsync(6)->wait();
+
         expect((string)$response)->toBe('Hello World');
     });
 });

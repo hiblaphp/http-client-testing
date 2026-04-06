@@ -73,8 +73,10 @@ trait AssertsCookies
         foreach ($this->getRequestRecorder()->getRequestHistory() as $request) {
             if ($this->getRequestMatcher()->matchesRequest($request, '*', $url)) {
                 $matchedAnyRequest = true;
+
                 try {
                     $this->getCookieManager()->assertCookieSent($name, $request->options);
+
                     return; // Found a matching request with the cookie!
                 } catch (MockAssertionException $e) {
                     continue; // Check the next matching request
@@ -82,7 +84,7 @@ trait AssertsCookies
             }
         }
 
-        if (!$matchedAnyRequest) {
+        if (! $matchedAnyRequest) {
             $this->failAssertion("No requests were made to URL: {$url}");
         }
 
@@ -114,6 +116,7 @@ trait AssertsCookies
     public function assertCookieExists(string $name): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieExists($name);
         } catch (MockAssertionException $e) {
@@ -127,6 +130,7 @@ trait AssertsCookies
     public function assertCookieValue(string $name, string $expectedValue): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieValue($name, $expectedValue);
         } catch (MockAssertionException $e) {
@@ -136,12 +140,13 @@ trait AssertsCookies
 
     /**
      * Assert that a specific cookie in the jar has matching attributes.
-     * 
+     *
      * @param array<string, mixed> $attributes
      */
     public function assertCookieHasAttributes(string $name, array $attributes): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieHasAttributes($name, $attributes);
         } catch (MockAssertionException $e) {
@@ -155,6 +160,7 @@ trait AssertsCookies
     public function assertCookieExpired(string $name): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieExpired($name);
         } catch (MockAssertionException $e) {
@@ -168,6 +174,7 @@ trait AssertsCookies
     public function assertCookieNotExpired(string $name): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieNotExpired($name);
         } catch (MockAssertionException $e) {
@@ -181,6 +188,7 @@ trait AssertsCookies
     public function assertCookieIsSecure(string $name): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieIsSecure($name);
         } catch (MockAssertionException $e) {
@@ -194,6 +202,7 @@ trait AssertsCookies
     public function assertCookieIsHttpOnly(string $name): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieIsHttpOnly($name);
         } catch (MockAssertionException $e) {
@@ -207,6 +216,7 @@ trait AssertsCookies
     public function assertCookieIsHostOnly(string $name): void
     {
         $this->registerAssertion();
+
         try {
             $this->getCookieManager()->assertCookieIsHostOnly($name);
         } catch (MockAssertionException $e) {

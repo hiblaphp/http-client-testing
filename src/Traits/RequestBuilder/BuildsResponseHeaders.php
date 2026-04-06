@@ -10,7 +10,7 @@ trait BuildsResponseHeaders
 
     /**
      * Add a response header.
-     * 
+     *
      * @param string|array<string> $value
      */
     public function respondWithHeader(string $name, string|array $value): static

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Hibla\HttpClient\Http;
 use Hibla\HttpClient\CookieJar;
+use Hibla\HttpClient\Http;
 
 use function Hibla\sleep;
 
@@ -23,7 +23,8 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
         Http::mock('POST')
             ->url('https://example.com/set')
             ->setCookie('wildcard', 'matched', '/', '.example.com')
-            ->register();
+            ->register()
+        ;
 
         Http::request()->useCookieJar($jar)->post('https://example.com/set')->wait();
 
@@ -52,7 +53,8 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
         Http::mock('POST')
             ->url('https://example.com/login')
             ->setCookie('app_session', 'active', '/api')
-            ->register();
+            ->register()
+        ;
 
         Http::mock('GET')->url('https://example.com/api/data')->register();
         Http::mock('GET')->url('https://example.com/public/data')->register();
@@ -74,7 +76,8 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
         Http::mock('POST')
             ->url('https://example.com/short-lived')
             ->setCookie('temporary', 'val', '/', null, time() + 1)
-            ->register();
+            ->register()
+        ;
 
         $client = Http::request()->useCookieJar($jar);
         $client->post('https://example.com/short-lived')->wait();
@@ -95,7 +98,8 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
         Http::mock('POST')
             ->url('https://example.com/set')
             ->setCookie('private', 'data', '/', null)
-            ->register();
+            ->register()
+        ;
 
         Http::request()->useCookieJar($jar)->post('https://example.com/set')->wait();
 
@@ -107,11 +111,12 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
 
     test('it does not send secure cookies over non-https requests', function () {
         $jar = Http::getTestingHandler()->cookies()->getDefaultCookieJar();
-        
+
         Http::mock('POST')
             ->url('https://secure.com/set')
-            ->setCookie('secret_key', 'vault-value', '/', null, null, true) 
-            ->register();
+            ->setCookie('secret_key', 'vault-value', '/', null, null, true)
+            ->register()
+        ;
 
         Http::request()->useCookieJar($jar)->post('https://secure.com/set')->wait();
 
@@ -122,17 +127,18 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
 
     test('it captures multiple Set-Cookie headers from a single response', function () {
         $jar = Http::getTestingHandler()->cookies()->getDefaultCookieJar();
-        
+
         Http::mock('GET')
             ->url('https://example.com/multi-cookie')
             ->respondWithHeaders([
                 'Set-Cookie' => [
                     'theme=dark; Path=/',
                     'layout=compact; Path=/',
-                    'tracking=false; Domain=.example.com'
-                ]
+                    'tracking=false; Domain=.example.com',
+                ],
             ])
-            ->register();
+            ->register()
+        ;
 
         Http::request()->useCookieJar($jar)->get('https://example.com/multi-cookie')->wait();
 
@@ -143,7 +149,7 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
 
     test('it merges manually added request cookies with the shared cookie jar', function () {
         $jar = Http::getTestingHandler()->cookies()->getDefaultCookieJar();
-        
+
         Http::mock('POST')->url('https://app.com/login')->setCookie('sess_id', 'abc-123')->register();
         Http::request()->useCookieJar($jar)->post('https://app.com/login')->wait();
 
@@ -152,7 +158,8 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
             ->useCookieJar($jar)
             ->withCookie('client_side_pref', 'large_font')
             ->get('https://app.com/api/data')
-            ->wait();
+            ->wait()
+        ;
 
         Http::assertCookieSent('sess_id');
         Http::assertCookieSent('client_side_pref');
@@ -160,7 +167,7 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
 
     test('it respects case-insensitivity for domain matching', function () {
         $jar = Http::getTestingHandler()->cookies()->getDefaultCookieJar();
-        
+
         Http::mock('POST')->url('https://example.com/set')->setCookie('case', 'insensitive')->register();
         Http::request()->useCookieJar($jar)->post('https://example.com/set')->wait();
         Http::mock('GET')->url('https://EXAMPLE.COM/get')->register();
@@ -171,28 +178,29 @@ describe('Shared CookieJar RFC 6265 Scoping in Mocks', function () {
 
     test('it overwrites existing cookies when name, domain, and path match', function () {
         $jar = Http::getTestingHandler()->cookies()->getDefaultCookieJar();
-        
+
         Http::mock('GET')->url('https://api.com/v1')->setCookie('api_token', 'old-token')->register();
         Http::mock('GET')->url('https://api.com/v2')->setCookie('api_token', 'new-token')->register();
 
         $client = Http::request()->useCookieJar($jar);
-        
+
         $client->get('https://api.com/v1')->wait();
         Http::assertCookieValue('api_token', 'old-token');
 
         $client->get('https://api.com/v2')->wait();
         Http::assertCookieValue('api_token', 'new-token');
-        
+
         expect($jar->getAllCookies())->toHaveCount(1);
     });
 
     test('it does not suffix match IP addresses', function () {
         $jar = Http::getTestingHandler()->cookies()->getDefaultCookieJar();
-        
+
         Http::mock('POST')
             ->url('https://127.0.0.1/set')
             ->setCookie('ip_cookie', 'strict', '/', '127.0.0.1')
-            ->register();
+            ->register()
+        ;
 
         Http::request()->useCookieJar($jar)->post('https://127.0.0.1/set')->wait();
 

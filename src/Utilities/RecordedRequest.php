@@ -7,7 +7,7 @@ namespace Hibla\HttpClient\Testing\Utilities;
 class RecordedRequest
 {
     public string $method;
-    
+
     public string $url;
 
     /**
@@ -94,8 +94,7 @@ class RecordedRequest
             $this->body = $curlBody;
         } elseif (is_string($fetchBody)) {
             $this->body = $fetchBody;
-        } 
-        elseif (is_array($curlBody)) {
+        } elseif (is_array($curlBody)) {
             $this->body = '[Multipart Form Data: ' . count($curlBody) . ' fields]';
 
             $safeArray = [];
@@ -107,6 +106,7 @@ class RecordedRequest
                 }
             }
             $this->parsedJson = $safeArray;
+
             return;
         } else {
             return;

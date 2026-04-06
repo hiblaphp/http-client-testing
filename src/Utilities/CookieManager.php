@@ -687,6 +687,7 @@ class CookieManager
                 }
                 if (str_starts_with(strtolower($header), 'cookie:')) {
                     $cookieHeader = substr($header, 7);
+
                     break;
                 }
             }
@@ -733,6 +734,7 @@ class CookieManager
             if ($actualValue !== $expectedValue) {
                 $expectedStr = var_export($expectedValue, true);
                 $actualStr = var_export($actualValue, true);
+
                 throw new MockAssertionException(
                     "Cookie '{$name}' attribute '{$key}' mismatch. Expected: {$expectedStr}, Got: {$actualStr}"
                 );

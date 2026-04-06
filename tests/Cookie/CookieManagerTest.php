@@ -239,7 +239,7 @@ describe('CookieManager', function () {
 
     test('assertCookieHasAttributes validates cookie properties', function () {
         $cookieManager = createCookieManager();
-        
+
         $cookieManager->addCookie(
             name: 'full_cookie',
             value: 'val',
@@ -263,58 +263,67 @@ describe('CookieManager', function () {
         ]))->not->toThrow(MockAssertionException::class);
 
         expect(fn () => $cookieManager->assertCookieHasAttributes('full_cookie', ['secure' => false]))
-            ->toThrow(MockAssertionException::class, "attribute 'secure' mismatch");
+            ->toThrow(MockAssertionException::class, "attribute 'secure' mismatch")
+        ;
 
         $cookieManager->cleanup();
     });
 
     test('assertCookieExpired and assertCookieNotExpired validate expiration', function () {
         $cookieManager = createCookieManager();
-        
+
         $cookieManager->addCookie('expired_cookie', 'val', expires: time() - 3600);
         $cookieManager->addCookie('active_cookie', 'val', expires: time() + 3600);
 
         expect(fn () => $cookieManager->assertCookieExpired('expired_cookie'))
-            ->not->toThrow(MockAssertionException::class);
+            ->not->toThrow(MockAssertionException::class)
+        ;
 
         expect(fn () => $cookieManager->assertCookieNotExpired('active_cookie'))
-            ->not->toThrow(MockAssertionException::class);
+            ->not->toThrow(MockAssertionException::class)
+        ;
 
         expect(fn () => $cookieManager->assertCookieExpired('active_cookie'))
-            ->toThrow(MockAssertionException::class, "is not expired in jar");
+            ->toThrow(MockAssertionException::class, 'is not expired in jar')
+        ;
 
         expect(fn () => $cookieManager->assertCookieNotExpired('expired_cookie'))
-            ->toThrow(MockAssertionException::class, "is expired in jar");
+            ->toThrow(MockAssertionException::class, 'is expired in jar')
+        ;
 
         $cookieManager->cleanup();
     });
 
     test('assertCookieIsSecure validates secure flag', function () {
         $cookieManager = createCookieManager();
-        
+
         $cookieManager->addCookie('secure_cookie', 'val', secure: true);
         $cookieManager->addCookie('insecure_cookie', 'val', secure: false);
 
         expect(fn () => $cookieManager->assertCookieIsSecure('secure_cookie'))
-            ->not->toThrow(MockAssertionException::class);
+            ->not->toThrow(MockAssertionException::class)
+        ;
 
         expect(fn () => $cookieManager->assertCookieIsSecure('insecure_cookie'))
-            ->toThrow(MockAssertionException::class, "missing the Secure flag");
+            ->toThrow(MockAssertionException::class, 'missing the Secure flag')
+        ;
 
         $cookieManager->cleanup();
     });
 
     test('assertCookieIsHttpOnly validates httponly flag', function () {
         $cookieManager = createCookieManager();
-        
+
         $cookieManager->addCookie('http_cookie', 'val', httpOnly: true);
         $cookieManager->addCookie('js_cookie', 'val', httpOnly: false);
 
         expect(fn () => $cookieManager->assertCookieIsHttpOnly('http_cookie'))
-            ->not->toThrow(MockAssertionException::class);
+            ->not->toThrow(MockAssertionException::class)
+        ;
 
         expect(fn () => $cookieManager->assertCookieIsHttpOnly('js_cookie'))
-            ->toThrow(MockAssertionException::class, "missing the HttpOnly flag");
+            ->toThrow(MockAssertionException::class, 'missing the HttpOnly flag')
+        ;
 
         $cookieManager->cleanup();
     });
@@ -327,10 +336,12 @@ describe('CookieManager', function () {
         $jar->setCookie(new Cookie('domain_cookie', 'val', domain: 'example.com', hostOnly: false));
 
         expect(fn () => $cookieManager->assertCookieIsHostOnly('host_cookie'))
-            ->not->toThrow(MockAssertionException::class);
+            ->not->toThrow(MockAssertionException::class)
+        ;
 
         expect(fn () => $cookieManager->assertCookieIsHostOnly('domain_cookie'))
-            ->toThrow(MockAssertionException::class, "is not host-only");
+            ->toThrow(MockAssertionException::class, 'is not host-only')
+        ;
 
         $cookieManager->cleanup();
     });
@@ -361,10 +372,12 @@ describe('CookieManager', function () {
         ];
 
         expect(fn () => $cookieManager->assertCookieNotSent('session_id', $curlOptions))
-            ->not->toThrow(MockAssertionException::class);
-            
+            ->not->toThrow(MockAssertionException::class)
+        ;
+
         expect(fn () => $cookieManager->assertCookieNotSent('auth_token', $curlOptions))
-            ->toThrow(MockAssertionException::class, "was unexpectedly sent");
+            ->toThrow(MockAssertionException::class, 'was unexpectedly sent')
+        ;
     });
 
     test('assert cookie sent throws when no cookie header', function () {

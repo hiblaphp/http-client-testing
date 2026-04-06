@@ -23,7 +23,7 @@ describe('PeriodicSSEEmitter', function () {
 
         $timerId = null;
 
-        expect(fn() => $emitter->emit(
+        expect(fn () => $emitter->emit(
             $promise,
             $mock,
             null,
@@ -580,7 +580,7 @@ describe('PeriodicSSEEmitter', function () {
 
             $timerId = null;
 
-            expect(fn() => $emitter->emit(
+            expect(fn () => $emitter->emit(
                 $promise,
                 $mock,
                 null,
@@ -604,7 +604,7 @@ describe('PeriodicSSEEmitter', function () {
 
             $timerId = null;
 
-            expect(fn() => $emitter->emit(
+            expect(fn () => $emitter->emit(
                 $promise,
                 $mock,
                 null,

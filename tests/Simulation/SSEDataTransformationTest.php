@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Hibla\HttpClient\Http;
 use Hibla\HttpClient\SSE\SSEDataFormat;
+
 beforeEach(function () {
     Http::startTesting();
 });
@@ -17,9 +18,10 @@ describe('SSE Mock Data Transformations', function () {
         Http::mock('GET')
             ->url('/sse-json')
             ->respondWithSSE([
-                ['data' => json_encode(['id' => 1, 'status' => 'active'])]
+                ['data' => json_encode(['id' => 1, 'status' => 'active'])],
             ])
-            ->register();
+            ->register()
+        ;
 
         $receivedData = null;
 
@@ -29,20 +31,23 @@ describe('SSE Mock Data Transformations', function () {
                 $receivedData = $data;
             })
             ->connect()
-            ->wait();
+            ->wait()
+        ;
 
         expect($receivedData)->toBeArray()
             ->and($receivedData['id'])->toBe(1)
-            ->and($receivedData['status'])->toBe('active');
+            ->and($receivedData['status'])->toBe('active')
+        ;
     });
 
     test('it converts mock event to array when format is Array', function () {
         Http::mock('GET')
             ->url('/sse-array')
             ->respondWithSSE([
-                ['id' => 'evt-001', 'event' => 'update', 'data' => 'some-payload']
+                ['id' => 'evt-001', 'event' => 'update', 'data' => 'some-payload'],
             ])
-            ->register();
+            ->register()
+        ;
 
         $receivedArray = null;
 
@@ -52,12 +57,14 @@ describe('SSE Mock Data Transformations', function () {
                 $receivedArray = $array;
             })
             ->connect()
-            ->wait();
+            ->wait()
+        ;
 
         expect($receivedArray)->toBeArray()
             ->and($receivedArray['id'])->toBe('evt-001')
             ->and($receivedArray['event'])->toBe('update')
-            ->and($receivedArray['data'])->toBe('some-payload');
+            ->and($receivedArray['data'])->toBe('some-payload')
+        ;
     });
 
     test('it applies custom map() logic to mocked events', function () {
@@ -65,20 +72,22 @@ describe('SSE Mock Data Transformations', function () {
             ->url('/sse-map')
             ->respondWithSSE([
                 ['data' => '100'],
-                ['data' => '200']
+                ['data' => '200'],
             ])
-            ->register();
+            ->register()
+        ;
 
         $numbers = [];
 
         Http::sse('/sse-map')
             ->dataFormat(SSEDataFormat::Raw)
-            ->map(fn($raw) => ((int)$raw) * 2)
+            ->map(fn ($raw) => ((int)$raw) * 2)
             ->onEvent(function ($val) use (&$numbers) {
                 $numbers[] = $val;
             })
             ->connect()
-            ->wait();
+            ->wait()
+        ;
 
         expect($numbers)->toBe([200, 400]);
     });

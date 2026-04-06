@@ -21,7 +21,7 @@ describe('Fetch API to cURL Option Mapping', function () {
             'max_redirects' => 12,
             'timeout' => 45,
             'connect_timeout' => 10,
-            'verify_ssl' => false
+            'verify_ssl' => false,
         ])->wait();
 
         $options = Http::getLastRequest()->getOptions();
@@ -30,7 +30,8 @@ describe('Fetch API to cURL Option Mapping', function () {
             ->and($options[CURLOPT_MAXREDIRS])->toBe(12)
             ->and($options[CURLOPT_TIMEOUT])->toBe(45)
             ->and($options[CURLOPT_CONNECTTIMEOUT])->toBe(10)
-            ->and($options[CURLOPT_SSL_VERIFYPEER])->toBeFalse();
+            ->and($options[CURLOPT_SSL_VERIFYPEER])->toBeFalse()
+        ;
     });
 
     test('it maps auth arrays to cURL auth options', function () {
@@ -40,29 +41,30 @@ describe('Fetch API to cURL Option Mapping', function () {
             'auth' => [
                 'basic' => [
                     'username' => 'admin',
-                    'password' => 'password123'
-                ]
-            ]
+                    'password' => 'password123',
+                ],
+            ],
         ])->wait();
 
         $options = Http::getLastRequest()->getOptions();
 
         expect($options[CURLOPT_HTTPAUTH])->toBe(CURLAUTH_BASIC)
-            ->and($options[CURLOPT_USERPWD])->toBe('admin:password123');
+            ->and($options[CURLOPT_USERPWD])->toBe('admin:password123')
+        ;
     });
 
     test('it maps protocol versions correctly', function () {
         Http::mock('GET')->url('/fetch-proto')->respondWithStatus(200)->register();
 
         Http::fetch('/fetch-proto', [
-            'http_version' => '1.1'
+            'http_version' => '1.1',
         ])->wait();
 
         $options = Http::getLastRequest()->getOptions();
         expect($options[CURLOPT_HTTP_VERSION])->toBe(CURL_HTTP_VERSION_1_1);
 
         Http::fetch('/fetch-proto', [
-            'http_version' => '2.0'
+            'http_version' => '2.0',
         ])->wait();
 
         $options = Http::getLastRequest()->getOptions();
@@ -73,13 +75,14 @@ describe('Fetch API to cURL Option Mapping', function () {
         Http::mock('GET')->url('/fetch-proxy')->respondWithStatus(200)->register();
 
         Http::fetch('/fetch-proxy', [
-            'proxy' => 'http://user:pass@myproxy.com:3128'
+            'proxy' => 'http://user:pass@myproxy.com:3128',
         ])->wait();
 
         $options = Http::getLastRequest()->getOptions();
 
         expect($options[CURLOPT_PROXY])->toBe('myproxy.com:3128')
             ->and($options[CURLOPT_PROXYUSERPWD])->toBe('user:pass')
-            ->and($options[CURLOPT_PROXYTYPE])->toBe(CURLPROXY_HTTP);
+            ->and($options[CURLOPT_PROXYTYPE])->toBe(CURLPROXY_HTTP)
+        ;
     });
 });

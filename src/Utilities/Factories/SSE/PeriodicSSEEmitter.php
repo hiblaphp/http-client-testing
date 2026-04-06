@@ -56,16 +56,16 @@ class PeriodicSSEEmitter
 
         $type = $config['type'] ?? 'periodic';
 
-        $interval = isset($config['interval']) && is_numeric($config['interval']) 
-            ? (float) $config['interval'] 
+        $interval = isset($config['interval']) && is_numeric($config['interval'])
+            ? (float) $config['interval']
             : $mock->getChunkDelay();
 
         if ($interval <= 0) {
             $interval = 0.01;
         }
 
-        $jitter = isset($config['jitter']) && is_numeric($config['jitter']) 
-            ? (float) $config['jitter'] 
+        $jitter = isset($config['jitter']) && is_numeric($config['jitter'])
+            ? (float) $config['jitter']
             : $mock->getChunkJitter();
 
         if ($type === 'infinite' && isset($config['event_generator']) && is_callable($config['event_generator'])) {
@@ -157,12 +157,12 @@ class PeriodicSSEEmitter
         SSEResponse $sseResponse
     ): void {
         $rawEvents = $config['events'] ?? [];
-        if (!is_array($rawEvents)) {
+        if (! is_array($rawEvents)) {
             $rawEvents = [];
         }
 
         $events = array_values(array_filter($rawEvents, 'is_array'));
-        
+
         $eventIndex = 0;
         $totalEvents = count($events);
         $autoClose = $config['auto_close'] ?? false;

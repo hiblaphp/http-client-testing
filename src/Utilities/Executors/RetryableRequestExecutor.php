@@ -69,7 +69,7 @@ class RetryableRequestExecutor
             }
         );
 
-        $finalPromise->onCancel(fn() => $retryPromise->cancel());
+        $finalPromise->onCancel(fn () => $retryPromise->cancel());
 
         return $finalPromise;
     }
@@ -84,7 +84,7 @@ class RetryableRequestExecutor
         string $url,
         array $curlOptions,
         array &$mockedRequests,
-        ?array $initialMatch = null 
+        ?array $initialMatch = null
     ): callable {
         $curlOnlyOptions = array_filter($curlOptions, 'is_int', ARRAY_FILTER_USE_KEY);
 

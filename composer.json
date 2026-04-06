@@ -9,6 +9,15 @@
             "email": "reymart.calicdan06@gmail.com"
         }
     ],
+    "keywords": [
+        "hiblaphp",
+        "http-client",
+        "testing",
+        "network",
+        "simulation",
+        "mock",
+        "plugin"
+    ],
     "autoload": {
         "psr-4": {
             "Hibla\\HttpClient\\Testing\\": "src/"

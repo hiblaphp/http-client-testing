@@ -7,7 +7,7 @@ use Hibla\HttpClient\ValueObjects\Cookie;
 use PHPUnit\Framework\AssertionFailedError;
 
 describe('AssertsCookies', function () {
-    
+
     test('assertCookieSent validates cookie was sent', function () {
         $handler = testingHttpHandler();
 
@@ -21,10 +21,12 @@ describe('AssertsCookies', function () {
             ->setHandler($handler)
             ->useCookieJar($jar)
             ->get('https://example.com')
-            ->wait();
+            ->wait()
+        ;
 
         expect(fn () => $handler->assertCookieSent('session'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('assertCookieNotSent validates cookie was not sent', function () {
@@ -35,15 +37,17 @@ describe('AssertsCookies', function () {
         (new HttpClient())
             ->setHandler($handler)
             ->get('https://example.com')
-            ->wait();
+            ->wait()
+        ;
 
         expect(fn () => $handler->assertCookieNotSent('session'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('assertCookieSentToUrl and assertCookieNotSentToUrl validate scope routing', function () {
         $handler = testingHttpHandler();
-        
+
         $jar = $handler->cookies()->createCookieJar();
         $jar->setCookie(new Cookie('session', 'abc', null, 'api.example.com'));
 
@@ -52,16 +56,19 @@ describe('AssertsCookies', function () {
 
         $client = (new HttpClient())
             ->setHandler($handler)
-            ->useCookieJar($jar);
+            ->useCookieJar($jar)
+        ;
 
         $client->get('https://api.example.com/users')->wait();
         $client->get('https://other.com/users')->wait();
 
         expect(fn () => $handler->assertCookieSentToUrl('session', 'https://api.example.com/users'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
 
         expect(fn () => $handler->assertCookieNotSentToUrl('session', 'https://other.com/users'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('assertCookieExists validates cookie exists in jar', function () {
@@ -74,7 +81,8 @@ describe('AssertsCookies', function () {
         $handler->withGlobalCookieJar($jar);
 
         expect(fn () => $handler->assertCookieExists('session'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('assertCookieValue validates cookie value', function () {
@@ -87,13 +95,14 @@ describe('AssertsCookies', function () {
         $handler->withGlobalCookieJar($jar);
 
         expect(fn () => $handler->assertCookieValue('session', 'abc123'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('assertCookieHasAttributes validates deep cookie configuration', function () {
         $handler = testingHttpHandler();
         $jar = $handler->cookies()->createCookieJar();
-        
+
         $cookie = new Cookie(
             name: 'session',
             value: 'xyz',
@@ -108,17 +117,18 @@ describe('AssertsCookies', function () {
         $handler->withGlobalCookieJar($jar);
 
         expect(fn () => $handler->assertCookieHasAttributes('session', [
-            'value'    => 'xyz',
-            'domain'   => 'example.com',
-            'path'     => '/admin',
-            'secure'   => true,
+            'value' => 'xyz',
+            'domain' => 'example.com',
+            'path' => '/admin',
+            'secure' => true,
             'httponly' => true,
             'samesite' => 'Strict',
-            'expires'  => 1700000000
+            'expires' => 1700000000,
         ]))->not->toThrow(AssertionFailedError::class);
 
         expect(fn () => $handler->assertCookieHasAttributes('session', ['secure' => false]))
-            ->toThrow(AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('assertCookieExpired and assertCookieNotExpired validate temporal state', function () {
@@ -126,20 +136,23 @@ describe('AssertsCookies', function () {
         $jar = $handler->cookies()->createCookieJar();
 
         $expired = new Cookie('old_cookie', '123', time() - 3600);
-        $active  = new Cookie('new_cookie', '123', time() + 3600);
+        $active = new Cookie('new_cookie', '123', time() + 3600);
 
         $jar->setCookie($expired);
         $jar->setCookie($active);
         $handler->withGlobalCookieJar($jar);
 
         expect(fn () => $handler->assertCookieExpired('old_cookie'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
 
         expect(fn () => $handler->assertCookieNotExpired('new_cookie'))
-            ->not->toThrow(AssertionFailedError::class);
-            
+            ->not->toThrow(AssertionFailedError::class)
+        ;
+
         expect(fn () => $handler->assertCookieExpired('new_cookie'))
-            ->toThrow(AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class)
+        ;
     });
 
     test('boolean flag assertions validate Secure, HttpOnly, and HostOnly states', function () {
@@ -166,17 +179,21 @@ describe('AssertsCookies', function () {
         $handler->withGlobalCookieJar($jar);
 
         expect(fn () => $handler->assertCookieIsSecure('safe_cookie'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
 
         expect(fn () => $handler->assertCookieIsHttpOnly('safe_cookie'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
 
         expect(fn () => $handler->assertCookieIsHostOnly('host_cookie'))
-            ->not->toThrow(AssertionFailedError::class);
+            ->not->toThrow(AssertionFailedError::class)
+        ;
 
         expect(fn () => $handler->assertCookieIsHostOnly('safe_cookie'))
-            ->toThrow(AssertionFailedError::class);
-            
+            ->toThrow(AssertionFailedError::class)
+        ;
+
         expect(fn () => $handler->assertCookieIsSecure('host_cookie'))
             ->toThrow(AssertionFailedError::class);
     });
