@@ -112,11 +112,9 @@ class RecordedRequest
             return;
         }
 
-        if ($this->body !== null) {
-            $decoded = json_decode($this->body, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                $this->parsedJson = $decoded;
-            }
+        $decoded = json_decode($this->body, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            $this->parsedJson = $decoded;
         }
     }
 

@@ -11,6 +11,7 @@ use Hibla\HttpClient\Testing\MockedRequest;
 use Hibla\HttpClient\Testing\Utilities\FileManager;
 use Hibla\HttpClient\Testing\Utilities\Handlers\DelayCalculator;
 use Hibla\HttpClient\Testing\Utilities\Handlers\NetworkSimulationHandler;
+use Hibla\HttpClient\Traits\NormalizeHeaderTrait;
 use Hibla\HttpClient\ValueObjects\DownloadProgress;
 use Hibla\Promise\Interfaces\PromiseInterface;
 use Hibla\Promise\Promise;
@@ -19,6 +20,8 @@ use function Hibla\delay;
 
 class DownloadResponseFactory
 {
+    use NormalizeHeaderTrait;
+
     private NetworkSimulationHandler $networkHandler;
     private DelayCalculator $delayCalculator;
 
@@ -35,7 +38,7 @@ class DownloadResponseFactory
      * @param string $destination The local path to save the file.
      * @param FileManager $fileManager Manager for tracking temporary files.
      * @param (callable(DownloadProgress): void)|null $onProgress Optional progress callback.
-     * @return PromiseInterface<array{file: string, status: int, headers: array<string, string>, size: int, protocol_version: string}>
+     * @return PromiseInterface<array{file: string, status: int, headers: array<string, string|array<string>>, size: int, protocol_version: string}>
      */
     public function create(
         MockedRequest $mock,
@@ -43,7 +46,7 @@ class DownloadResponseFactory
         FileManager $fileManager,
         ?callable $onProgress = null
     ): PromiseInterface {
-        /** @var Promise<array{file: string, status: int, headers: array<string, string>, size: int, protocol_version: string}> $promise */
+        /** @var Promise<array{file: string, status: int, headers: array<string, string|array<string>>, size: int, protocol_version: string}> $promise */
         $promise = new Promise();
 
         $networkConditions = $this->networkHandler->simulate();
@@ -126,6 +129,7 @@ class DownloadResponseFactory
      * @param resource $file The open file handle.
      * @param string $content The full body content to write.
      * @param int $offset The current byte offset.
+     * @param Promise<array{file: string, status: int, headers: array<string, string|array<string>>, size: int, protocol_version: string}> $promise
      */
     private function deliverChunksAsync(
         $file,
@@ -216,26 +220,5 @@ class DownloadResponseFactory
             }
             $fileManager->trackDirectory($directory);
         }
-    }
-
-    /**
-     * Normalizes headers array to standard string/string pairs.
-     *
-     * @param array<string, string|array<string>> $headers
-     * @return array<string, string>
-     */
-    private function normalizeHeaders(array $headers): array
-    {
-        $normalized = [];
-
-        foreach ($headers as $name => $value) {
-            if (\is_array($value)) {
-                $normalized[$name] = implode(', ', $value);
-            } else {
-                $normalized[$name] = $value;
-            }
-        }
-
-        return $normalized;
     }
 }

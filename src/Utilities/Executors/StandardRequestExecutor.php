@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hibla\HttpClient\Testing\Utilities\Executors;
 
 use Hibla\HttpClient\Response;
+use Hibla\HttpClient\StreamingResponse;
 use Hibla\HttpClient\Testing\Exceptions\UnexpectedRequestException;
 use Hibla\HttpClient\Testing\MockedRequest;
 use Hibla\HttpClient\Testing\Utilities\CookieManager;
@@ -19,7 +20,6 @@ use Hibla\Promise\Interfaces\PromiseInterface;
 class StandardRequestExecutor
 {
     private RequestMatcher $requestMatcher;
-    private ResponseFactory $responseFactory;
     private CookieManager $cookieManager;
     private RequestRecorder $requestRecorder;
     private RequestValidator $validator;
@@ -35,7 +35,6 @@ class StandardRequestExecutor
         ResponseTypeHandler $responseTypeHandler
     ) {
         $this->requestMatcher = $requestMatcher;
-        $this->responseFactory = $responseFactory;
         $this->cookieManager = $cookieManager;
         $this->requestRecorder = $requestRecorder;
         $this->validator = $validator;
@@ -52,7 +51,8 @@ class StandardRequestExecutor
      * @param array<int|string, mixed> $curlOptions
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
-     * @return PromiseInterface<Response>
+     * @param (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>)|null $parentSendRequest
+     * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     public function execute(
         string $url,
@@ -108,9 +108,8 @@ class StandardRequestExecutor
      */
     private function extractMethod(array $curlOptions): string
     {
-        return \is_string($curlOptions[CURLOPT_CUSTOMREQUEST] ?? null)
-            ? $curlOptions[CURLOPT_CUSTOMREQUEST]
-            : 'GET';
+        $method = $curlOptions[CURLOPT_CUSTOMREQUEST] ?? 'GET';
+        return is_string($method) ? $method : 'GET';
     }
 
     /**
@@ -118,6 +117,7 @@ class StandardRequestExecutor
      * @param array<int, mixed> $curlOnlyOptions
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
+     * @param (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>)|null $parentSendRequest
      * @return PromiseInterface<Response>
      */
     private function handleNoMatch(
@@ -147,16 +147,16 @@ class StandardRequestExecutor
     }
 
     /**
-     * @param PromiseInterface<Response> $promise
+     * @param PromiseInterface<Response|StreamingResponse|array<string, mixed>> $promise
      * @param array<int|string, mixed> $curlOptions
-     * @return PromiseInterface<Response>
+     * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     private function applyPostProcessing(
         PromiseInterface $promise,
         array $curlOptions,
         string $url
     ): PromiseInterface {
-        $mappedPromise = $promise->then(function ($response) use ($curlOptions, $url) {
+        $mappedPromise = $promise->then(function (mixed $response) use ($curlOptions, $url) {
             if ($response instanceof Response) {
                 $this->processCookies($response, $curlOptions, $url);
             }
@@ -188,9 +188,9 @@ class StandardRequestExecutor
 
     /**
      * @param array<int|string, mixed> $curlOptions
+     * @param array{mock: MockedRequest, index: int} $matchedMock
      * @param list<MockedRequest> $mockedRequests
-     * @param array<string, mixed> $globalSettings
-     * @return PromiseInterface<Response>
+     * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     private function executeMockedRequest(
         string $url,
@@ -214,9 +214,12 @@ class StandardRequestExecutor
 
         $this->requestRecorder->recordRequest($method, $url, $curlOptions);
 
+        /** @var array<string, mixed> $optionsForHandler */
+        $optionsForHandler = array_filter($curlOptions, 'is_string', ARRAY_FILTER_USE_KEY);
+
         return $this->responseTypeHandler->handleMockedResponse(
             $matchedMock,
-            $curlOptions,
+            $optionsForHandler,
             $mockedRequests,
             $url,
             $method

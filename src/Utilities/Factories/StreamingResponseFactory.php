@@ -87,7 +87,6 @@ class StreamingResponseFactory
                 ));
 
                 $this->processChunks($mock, $onChunk, $stream);
-
             } catch (\Exception $e) {
                 $promise->reject($e);
             }
@@ -107,6 +106,8 @@ class StreamingResponseFactory
             $chunks = [$mock->getBody()];
         }
 
+        $chunks = array_values($chunks);
+
         $baseDelay = $mock->getChunkDelay();
         $jitter = $mock->getChunkJitter();
 
@@ -116,7 +117,7 @@ class StreamingResponseFactory
     /**
      * Recursively schedules the next chunk using the Event Loop.
      *
-     * @param array<int, string> $chunks
+     * @param list<string> $chunks
      */
     private function deliverNextChunk(
         array $chunks,

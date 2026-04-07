@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// src/Testing/Traits/RequestBuilder/BuildsBasicMocks.php
-
 namespace Hibla\HttpClient\Testing\Traits\RequestBuilder;
 
 trait BuildsBasicMocks
@@ -81,7 +79,13 @@ trait BuildsBasicMocks
     public function respondXml(string|\SimpleXMLElement $xml): static
     {
         if ($xml instanceof \SimpleXMLElement) {
-            $xml = $xml->asXML();
+            $xmlString = $xml->asXML();
+
+            if ($xmlString === false) {
+                throw new \InvalidArgumentException('The provided SimpleXMLElement could not be serialized to an XML string.');
+            }
+
+            $xml = $xmlString;
         }
 
         $this->getRequest()->setBody($xml);

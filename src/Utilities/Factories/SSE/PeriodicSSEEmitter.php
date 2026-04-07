@@ -26,7 +26,7 @@ class PeriodicSSEEmitter
      * @param MockedRequest $mock
      * @param callable|null $onEvent
      * @param callable|null $onError
-     * @param string|null &$periodicTimerId
+     * @param string|null $periodicTimerId
      */
     public function emit(
         Promise $promise,
@@ -54,7 +54,8 @@ class PeriodicSSEEmitter
 
         $promise->resolve($sseResponse);
 
-        $type = $config['type'] ?? 'periodic';
+        $typeRaw = $config['type'] ?? 'periodic';
+        $type = is_string($typeRaw) ? $typeRaw : 'periodic';
 
         $interval = isset($config['interval']) && is_numeric($config['interval'])
             ? (float) $config['interval']
@@ -77,6 +78,13 @@ class PeriodicSSEEmitter
 
     /**
      * Sets up an infinite event stream.
+     * 
+     * @param array<string, mixed> $config
+     * @param callable|null $onEvent
+     * @param float $interval
+     * @param float $jitter
+     * @param string|null $periodicTimerId
+     * @param SSEResponse $sseResponse
      */
     private function setupInfiniteEmitter(
         array $config,
@@ -86,9 +94,13 @@ class PeriodicSSEEmitter
         ?string &$periodicTimerId,
         SSEResponse $sseResponse
     ): void {
-        $eventGenerator = $config['event_generator'];
-        $maxEvents = $config['max_events'] ?? null;
+        $eventGenerator = $config['event_generator'] ?? null;
+        $maxEvents = isset($config['max_events']) && is_numeric($config['max_events']) ? (int) $config['max_events'] : null;
         $eventIndex = 0;
+
+        if (!is_callable($eventGenerator)) {
+            return;
+        }
 
         $periodicTimerId = Loop::addPeriodicTimer(
             interval: $interval,
@@ -114,14 +126,18 @@ class PeriodicSSEEmitter
                 }
 
                 if ($maxEvents !== null && $eventIndex >= $maxEvents) {
-                    Loop::cancelTimer($periodicTimerId);
-                    $periodicTimerId = null;
+                    if ($periodicTimerId !== null) {
+                        Loop::cancelTimer($periodicTimerId);
+                        $periodicTimerId = null;
+                    }
 
                     return;
                 }
 
+                /** @var array{id?: string, event?: string, data?: string, retry?: int}|null $eventData */
                 $eventData = $eventGenerator($eventIndex);
-                if (\is_array($eventData)) {
+                
+                if (is_array($eventData)) {
                     $formattedEvent = $this->formatter->formatEvents([$eventData]);
 
                     $sseResponse->getBody()->write($formattedEvent);
@@ -143,8 +159,19 @@ class PeriodicSSEEmitter
         );
     }
 
-    /**
+   /**
      * Sets up a finite stream from a predefined list of events.
+     * 
+     * @param array<string, mixed> $config
+     * @param MockedRequest $mock
+     * @param callable|null $onEvent
+     * @param callable|null $onError
+     * @param float $interval
+     * @param float $jitter
+     * @param string|null $periodicTimerId
+     * @param SSEResponse $sseResponse
+     * 
+     * @param-out string $periodicTimerId 
      */
     private function setupFiniteEmitter(
         array $config,
@@ -161,11 +188,12 @@ class PeriodicSSEEmitter
             $rawEvents = [];
         }
 
+        /** @var array<int, array{id?: string, event?: string, data?: string, retry?: int}> $events */
         $events = array_values(array_filter($rawEvents, 'is_array'));
 
         $eventIndex = 0;
         $totalEvents = count($events);
-        $autoClose = $config['auto_close'] ?? false;
+        $autoClose = (bool) ($config['auto_close'] ?? false);
 
         $maxExecutions = $autoClose ? $totalEvents + 1 : $totalEvents;
 
@@ -196,8 +224,10 @@ class PeriodicSSEEmitter
                 }
 
                 if ($eventIndex >= $totalEvents) {
-                    Loop::cancelTimer($periodicTimerId);
-                    $periodicTimerId = null;
+                    if ($periodicTimerId !== null) {
+                        Loop::cancelTimer($periodicTimerId);
+                        $periodicTimerId = null;
+                    }
 
                     if ($mock->shouldFail() && $autoClose) {
                         $error = $mock->getError() ?? 'Connection closed';

@@ -34,7 +34,14 @@ class ImmediateSSEEmitter
         ?string &$lastEventId,
         ?int &$retryInterval
     ): void {
-        $stream = new Stream(fopen('php://temp', 'r+b'));
+        $resource = fopen('php://temp', 'r+b');
+
+        if ($resource === false) {
+            $promise->reject(new \RuntimeException('Failed to open temporary stream for SSE emulation.'));
+            return;
+        }
+
+        $stream = new Stream($resource);
         $sseResponse = new SSEResponse(
             $stream,
             $mock->getStatusCode(),

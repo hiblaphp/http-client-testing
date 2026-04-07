@@ -12,6 +12,7 @@ use Hibla\HttpClient\Testing\Utilities\Handlers\ResponseTypeHandler;
 use Hibla\HttpClient\Testing\Utilities\Validators\RequestValidator;
 use Hibla\HttpClient\ValueObjects\RetryConfig;
 use Hibla\Promise\Interfaces\PromiseInterface;
+use Hibla\HttpClient\StreamingResponse;
 
 class RequestExecutor
 {
@@ -67,7 +68,10 @@ class RequestExecutor
      * @param array<int|string, mixed> $curlOptions
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
-     * @return PromiseInterface<Response>
+     * @param ?RetryConfig $retryConfig
+     * @param (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>)|null $parentSendRequest
+     * 
+     * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     public function executeSendRequest(
         string $url,
@@ -86,6 +90,7 @@ class RequestExecutor
             $parentSendRequest
         );
     }
+
 
     /**
      * @param array<int, mixed> $curlOptions

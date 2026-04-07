@@ -183,7 +183,7 @@ class RetryableSSEResponseFactory
 
     /**
      * @param array{should_fail: bool, error_message?: string} $networkConditions
-     * @return array{should_fail: bool, is_retryable: bool, error_message: string, exception?: Exception}
+     * @return array{should_fail: bool, is_retryable: bool, error_message: string, exception: \Exception|null}
      */
     private function evaluateAttempt(
         MockedRequest $mock,
@@ -193,6 +193,7 @@ class RetryableSSEResponseFactory
         $shouldFail = false;
         $isRetryable = false;
         $errorMessage = '';
+        /** @var \Exception|null $exception */
         $exception = null;
 
         if ($networkConditions['should_fail']) {

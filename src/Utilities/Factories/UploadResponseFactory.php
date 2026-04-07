@@ -10,6 +10,7 @@ use Hibla\HttpClient\Exceptions\NetworkException;
 use Hibla\HttpClient\Testing\MockedRequest;
 use Hibla\HttpClient\Testing\Utilities\Handlers\DelayCalculator;
 use Hibla\HttpClient\Testing\Utilities\Handlers\NetworkSimulationHandler;
+use Hibla\HttpClient\Traits\NormalizeHeaderTrait;
 use Hibla\HttpClient\ValueObjects\UploadProgress;
 use Hibla\Promise\Interfaces\PromiseInterface;
 use Hibla\Promise\Promise;
@@ -18,6 +19,8 @@ use function Hibla\delay;
 
 class UploadResponseFactory
 {
+    use NormalizeHeaderTrait;
+
     private NetworkSimulationHandler $networkHandler;
     private DelayCalculator $delayCalculator;
 
@@ -30,7 +33,7 @@ class UploadResponseFactory
     /**
      * Creates a mock upload response with realistic asynchronous progress delivery.
      *
-     * @return PromiseInterface<array{url: string, status: int, headers: array<string, string>, protocol_version: string|null}>
+     * @return PromiseInterface<array{url: string, status: int, headers: array<string, string|array<string>>, protocol_version: string|null}>
      */
     public function create(
         MockedRequest $mock,
@@ -38,7 +41,7 @@ class UploadResponseFactory
         string $url,
         ?callable $onProgress = null
     ): PromiseInterface {
-        /** @var Promise<array{url: string, status: int, headers: array<string, string>, protocol_version: string|null}> $promise */
+        /** @var Promise<array{url: string, status: int, headers: array<string, string|array<string>>, protocol_version: string|null}> $promise */
         $promise = new Promise();
 
         if (! file_exists($source)) {
@@ -113,6 +116,8 @@ class UploadResponseFactory
 
     /**
      * Recursively simulates the upload progress using the Event Loop.
+     * 
+     * @param Promise<array{url: string, status: int, headers: array<string, string|array<string>>, protocol_version: string|null}> $promise
      */
     private function deliverUploadProgressAsync(
         int $offset,
@@ -159,9 +164,7 @@ class UploadResponseFactory
     }
 
     /**
-     * @param MockedRequest $mock
-     * @param string $url
-     * @return array{headers: array, protocol_version: string, status: int, url: string}
+     * @return array{url: string, status: int, headers: array<string, string|array<string>>, protocol_version: string}
      */
     private function buildResponse(MockedRequest $mock, string $url): array
     {
@@ -171,15 +174,5 @@ class UploadResponseFactory
             'headers' => $this->normalizeHeaders($mock->getHeaders()),
             'protocol_version' => '2.0',
         ];
-    }
-
-    private function normalizeHeaders(array $headers): array
-    {
-        $normalized = [];
-        foreach ($headers as $name => $value) {
-            $normalized[$name] = \is_array($value) ? implode(', ', $value) : $value;
-        }
-
-        return $normalized;
     }
 }

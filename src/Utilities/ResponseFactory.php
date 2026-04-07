@@ -18,6 +18,8 @@ use Hibla\HttpClient\Testing\Utilities\Factories\StandardResponseFactory;
 use Hibla\HttpClient\Testing\Utilities\Factories\StreamingResponseFactory;
 use Hibla\HttpClient\Testing\Utilities\Factories\UploadResponseFactory;
 use Hibla\HttpClient\Testing\Utilities\Handlers\NetworkSimulationHandler;
+use Hibla\HttpClient\ValueObjects\DownloadProgress;
+use Hibla\HttpClient\ValueObjects\UploadProgress;
 use Hibla\HttpClient\ValueObjects\RetryConfig;
 use Hibla\Promise\Interfaces\PromiseInterface;
 
@@ -76,7 +78,12 @@ class ResponseFactory
     }
 
     /**
-     * @return PromiseInterface<array{file: string, status: int, headers: array<string, string>, size: int, protocol_version: string}>
+     * @param MockedRequest $mock
+     * @param string $destination
+     * @param FileManager $fileManager
+     * @param (callable(DownloadProgress): void)|null $onProgress
+     * 
+     * @return PromiseInterface<array{file: string, status: int, headers: array<string, array<string>|string>, size: int, protocol_version: string}>
      */
     public function createMockedDownload(
         MockedRequest $mock,
@@ -87,6 +94,14 @@ class ResponseFactory
         return $this->downloadFactory->create($mock, $destination, $fileManager, $onProgress);
     }
 
+    /**
+     * @param MockedRequest $mock
+     * @param string $source
+     * @param string $url
+     * @param (callable(UploadProgress): void)|null $onProgress
+     * 
+     * @return PromiseInterface<array{url: string, status: int, headers: array<string, array<string>|string>, protocol_version: string|null}>
+     */
     public function createMockedUpload(
         MockedRequest $mock,
         string $source,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hibla\HttpClient\Testing\Utilities\Executors;
 
+use Hibla\HttpClient\Interfaces\StreamInterface;
 use Hibla\HttpClient\Response;
 use Hibla\HttpClient\StreamingResponse;
 use Hibla\HttpClient\Testing\Exceptions\MockAssertionException;
@@ -39,7 +40,7 @@ class RetryableRequestExecutor
     /**
      * @param array<int|string, mixed> $curlOptions
      * @param list<MockedRequest> $mockedRequests
-     * @param array<string, mixed> $initialMatch Optional initial match result
+     * @param array{mock: MockedRequest, index: int}|null $initialMatch Optional initial match result
      * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     public function executeWithRetry(
@@ -76,8 +77,9 @@ class RetryableRequestExecutor
 
     /**
      * @param array<int|string, mixed> $curlOptions
-     * @param array<string, mixed> $initialMatch Optional initial match result
+     * @param array{mock: MockedRequest, index: int}|null $initialMatch Optional initial match result
      * @param list<MockedRequest> $mockedRequests
+     * @return callable(int): MockedRequest
      */
     private function createMockProvider(
         string $method,
@@ -115,7 +117,7 @@ class RetryableRequestExecutor
             $this->requestRecorder->recordRequest($method, $url, $curlOptions);
 
             if (! $mock->isPersistent()) {
-                array_splice($mockedRequests, $index, 1);
+                array_splice($mockedRequests, (int) $index, 1);
             }
 
             return $mock;
@@ -143,13 +145,17 @@ class RetryableRequestExecutor
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @param Promise<Response|StreamingResponse|array<string, mixed>> $finalPromise
+     */
     private function resolveUpload(
         Response $successfulResponse,
         array $options,
         Promise $finalPromise,
         string $url
     ): void {
-        $source = \is_string($options['upload']) ? $options['upload'] : '';
+        $source = \is_string($options['upload'] ?? null) ? $options['upload'] : '';
         $onProgress = $options['on_progress'] ?? null;
 
         if ($source !== '' && file_exists($source) && is_callable($onProgress)) {
@@ -185,7 +191,7 @@ class RetryableRequestExecutor
         array $options,
         Promise $finalPromise
     ): void {
-        $destPath = \is_string($options['download']) ? $options['download'] : sys_get_temp_dir() . '/dl_' . uniqid() . '.tmp';
+        $destPath = \is_string($options['download'] ?? null) ? $options['download'] : sys_get_temp_dir() . '/dl_' . uniqid() . '.tmp';
 
         $body = $successfulResponse->body();
         $total = \strlen($body);
@@ -231,6 +237,10 @@ class RetryableRequestExecutor
         }
 
         $stream = $this->createStream($body);
+
+        if (!$stream instanceof StreamInterface) {
+            throw new \RuntimeException('Created stream does not implement Hibla StreamInterface');
+        }
 
         $finalPromise->resolve(
             new StreamingResponse($stream, $successfulResponse->status(), $successfulResponse->headers())

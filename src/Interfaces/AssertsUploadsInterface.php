@@ -16,6 +16,9 @@ interface AssertsUploadsInterface
 
     public function assertUploadCount(int $expected): void;
 
+    /**
+     * @return array<int, RecordedRequest>
+     */
     public function getUploadRequests(): array;
 
     public function getLastUpload(): ?RecordedRequest;

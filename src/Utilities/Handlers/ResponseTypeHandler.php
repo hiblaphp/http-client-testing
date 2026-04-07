@@ -63,9 +63,15 @@ class ResponseTypeHandler
         return $this->handleStandardResponse($mock);
     }
 
+    /**
+     * @param MockedRequest $mock
+     * @param array<int|string, mixed> $options
+     * @param string $url
+     * @return PromiseInterface<array{url: string, status: int, headers: array<string, string>, protocol_version: string|null}>
+     */
     private function handleUpload(MockedRequest $mock, array $options, string $url): PromiseInterface
     {
-        $source = \is_string($options['upload']) ? $options['upload'] : '';
+        $source = \is_string($options['upload'] ?? null) ? $options['upload'] : '';
         $onProgress = isset($options['on_progress']) && is_callable($options['on_progress']) ? $options['on_progress'] : null;
 
         if ($source === '') {
@@ -76,12 +82,13 @@ class ResponseTypeHandler
     }
 
     /**
-     * @param array<string, mixed> $options
-     * @return PromiseInterface<array<string, mixed>>
+     * @param MockedRequest $mock
+     * @param array<int|string, mixed> $options
+     * @return PromiseInterface<array{file: string, status: int, headers: array<string, string>, size: int, protocol_version: string}>
      */
     private function handleDownload(MockedRequest $mock, array $options): PromiseInterface
     {
-        $destination = \is_string($options['download']) ? $options['download'] : '';
+        $destination = \is_string($options['download'] ?? null) ? $options['download'] : '';
         $onProgress = isset($options['on_progress']) && is_callable($options['on_progress']) ? $options['on_progress'] : null;
 
         if ($destination === '') {
@@ -92,7 +99,9 @@ class ResponseTypeHandler
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param MockedRequest $mock
+     * @param array<int|string, mixed> $options
+     * @param (callable(string): StreamInterface)|null $createStream
      * @return PromiseInterface<StreamingResponse>
      */
     private function handleStream(MockedRequest $mock, array $options, ?callable $createStream): PromiseInterface
@@ -100,12 +109,13 @@ class ResponseTypeHandler
         $onChunkRaw = $options['on_chunk'] ?? $options['onChunk'] ?? null;
         $onChunk = is_callable($onChunkRaw) ? $onChunkRaw : null;
 
-        $createStreamFn = $createStream ?? fn (string $body): StreamInterface => $this->createStream($body);
+        $createStreamFn = $createStream ?? fn(string $body): StreamInterface => $this->createStream($body);
 
         return $this->responseFactory->createMockedStream($mock, $onChunk, $createStreamFn);
     }
 
     /**
+     * @param MockedRequest $mock
      * @return PromiseInterface<Response>
      */
     private function handleStandardResponse(
@@ -113,7 +123,7 @@ class ResponseTypeHandler
     ): PromiseInterface {
         $responsePromise = $this->responseFactory->createMockedResponse($mock);
 
-        $mappedPromise = $responsePromise->then(fn (Response $response): Response => $response);
+        $mappedPromise = $responsePromise->then(fn(Response $response): Response => $response);
 
         $mappedPromise->onCancel($responsePromise->cancel(...));
 
