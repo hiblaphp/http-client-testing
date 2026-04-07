@@ -94,8 +94,12 @@ class RetryableSSEResponseFactory
                     throw new MockException('Mock provider must return a MockedRequest instance');
                 }
             } catch (Exception $e) {
-                $promise->reject(new MockException('Mock provider error: ' . $e->getMessage()));
-
+                if ($promise->isPending()) {
+                    $promise->reject(new MockException('Mock provider error: ' . $e->getMessage()));
+                } elseif ($onError !== null) {
+                    $onError('Mock provider error: ' . $e->getMessage());
+                }
+                
                 return;
             }
 
@@ -131,37 +135,71 @@ class RetryableSSEResponseFactory
 
                 $result = $this->evaluateAttempt($mock, $networkConditions, $reconnectConfig);
 
-                if ($result['should_fail'] && $result['is_retryable'] && $attempt < $reconnectConfig->maxAttempts) {
-                    $attempt++;
+                // Handle Handshake Failure (connection never established)
+                if ($result['is_handshake_failure']) {
+                    if ($result['is_retryable'] && $attempt < $reconnectConfig->maxAttempts) {
+                        $attempt++;
 
-                    $retryDelay = $retryInterval !== null
-                        ? ($retryInterval / 1000.0)
-                        : $reconnectConfig->calculateDelay($attempt);
+                        $retryDelay = $retryInterval !== null
+                            ? ($retryInterval / 1000.0)
+                            : $reconnectConfig->calculateDelay($attempt);
 
-                    if ($onReconnect !== null) {
-                        $onReconnect($attempt, $retryDelay, $result['error_message']);
+                        if ($onReconnect !== null) {
+                            $onReconnect($attempt, $retryDelay, $result['error_message']);
+                        }
+
+                        if ($onError !== null) {
+                            $onError($result['error_message']);
+                        }
+
+                        $activeDelayPromise = delay($retryDelay);
+                        $activeDelayPromise->then($executeAttempt);
+                    } else {
+                        if ($onError !== null) {
+                            $onError($result['error_message']);
+                        }
+                        if ($promise->isPending()) {
+                            $promise->reject(new NetworkException(
+                                "SSE connection failed after {$currentAttempt} attempt(s): {$result['error_message']}"
+                            ));
+                        }
                     }
-
-                    if ($onError !== null) {
-                        $onError($result['error_message']);
-                    }
-
-                    $activeDelayPromise = delay($retryDelay);
-                    $activeDelayPromise->then($executeAttempt);
-                } elseif ($result['should_fail']) {
-                    if ($onError !== null) {
-                        $onError($result['error_message']);
-                    }
-                    $promise->reject(new NetworkException(
-                        "SSE connection failed after {$currentAttempt} attempt(s): {$result['error_message']}"
-                    ));
                 } else {
+                    // Handle Mid-Stream Drop Logic
+                    $onMidStreamError = function (string $errorMsg) use ($reconnectConfig, $onError, $onReconnect, &$attempt, &$activeDelayPromise, &$executeAttempt, &$retryInterval, $mock) {
+                        $exception = new Exception($errorMsg);
+                        $isRetryable = $reconnectConfig->isRetryableError($exception) || $mock->isRetryableFailure();
+
+                        if ($isRetryable && $attempt < $reconnectConfig->maxAttempts) {
+                            $attempt++;
+                            
+                            $retryDelay = $retryInterval !== null
+                                ? ($retryInterval / 1000.0)
+                                : $reconnectConfig->calculateDelay($attempt);
+
+                            if ($onReconnect !== null) {
+                                $onReconnect($attempt, $retryDelay, $errorMsg);
+                            }
+
+                            if ($onError !== null) {
+                                $onError($errorMsg);
+                            }
+
+                            $activeDelayPromise = delay($retryDelay);
+                            $activeDelayPromise->then($executeAttempt);
+                        } else {
+                            if ($onError !== null) {
+                                $onError($errorMsg);
+                            }
+                        }
+                    };
+
                     try {
                         if ($mock->hasStreamConfig()) {
-                            $this->periodicEmitter->emit($promise, $mock, $onEvent, $onError, $periodicTimerId);
+                            $this->periodicEmitter->emit($promise, $mock, $onEvent, $onError, $periodicTimerId, $onMidStreamError);
                         } else {
                             $immediateEmitter = new ImmediateSSEEmitter();
-                            $immediateEmitter->emit($promise, $mock, $onEvent, $lastEventId, $retryInterval);
+                            $immediateEmitter->emit($promise, $mock, $onEvent, $lastEventId, $retryInterval, $onMidStreamError);
                         }
 
                         $attempt = 0;
@@ -169,7 +207,9 @@ class RetryableSSEResponseFactory
                         if ($onError !== null) {
                             $onError($e->getMessage());
                         }
-                        $promise->reject($e);
+                        if ($promise->isPending()) {
+                            $promise->reject($e);
+                        }
                     }
                 }
             });
@@ -183,31 +223,31 @@ class RetryableSSEResponseFactory
 
     /**
      * @param array{should_fail: bool, error_message?: string} $networkConditions
-     * @return array{should_fail: bool, is_retryable: bool, error_message: string, exception: Exception|null}
+     * @return array{is_handshake_failure: bool, is_retryable: bool, error_message: string, exception: Exception|null}
      */
     private function evaluateAttempt(
         MockedRequest $mock,
         array $networkConditions,
         SSEReconnectConfig $reconnectConfig
     ): array {
-        $shouldFail = false;
+        $isHandshakeFailure = false;
         $isRetryable = false;
         $errorMessage = '';
         /** @var Exception|null $exception */
         $exception = null;
 
         if ($networkConditions['should_fail']) {
-            $shouldFail = true;
+            $isHandshakeFailure = true;
             $errorMessage = $networkConditions['error_message'] ?? 'Network failure';
             $exception = new Exception($errorMessage);
             $isRetryable = $reconnectConfig->isRetryableError($exception);
-        } elseif ($mock->shouldFail()) {
-            $shouldFail = true;
+        } elseif ($mock->shouldFail() && \count($mock->getSSEEvents()) === 0 && !$mock->hasStreamConfig()) {
+            $isHandshakeFailure = true;
             $errorMessage = $mock->getError() ?? 'SSE connection failed';
             $exception = new Exception($errorMessage);
             $isRetryable = $reconnectConfig->isRetryableError($exception) || $mock->isRetryableFailure();
         } elseif ($mock->getStatusCode() >= 400) {
-            $shouldFail = true;
+            $isHandshakeFailure = true;
             $errorMessage = "HTTP {$mock->getStatusCode()} Failure";
 
             if ($mock->getStatusCode() >= 500) {
@@ -220,7 +260,7 @@ class RetryableSSEResponseFactory
         }
 
         return [
-            'should_fail' => $shouldFail,
+            'is_handshake_failure' => $isHandshakeFailure,
             'is_retryable' => $isRetryable,
             'error_message' => $errorMessage,
             'exception' => $exception,

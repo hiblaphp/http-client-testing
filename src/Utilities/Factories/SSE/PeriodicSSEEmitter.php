@@ -27,13 +27,15 @@ class PeriodicSSEEmitter
      * @param callable|null $onEvent
      * @param callable|null $onError
      * @param string|null $periodicTimerId
+     * @param callable|null $onMidStreamError
      */
     public function emit(
         Promise $promise,
         MockedRequest $mock,
         ?callable $onEvent,
         ?callable $onError,
-        ?string &$periodicTimerId
+        ?string &$periodicTimerId,
+        ?callable $onMidStreamError = null
     ): void {
         $config = $mock->getSSEStreamConfig();
         if ($config === null) {
@@ -52,7 +54,9 @@ class PeriodicSSEEmitter
             $mock->getHeaders()
         );
 
-        $promise->resolve($sseResponse);
+        if ($promise->isPending()) {
+            $promise->resolve($sseResponse);
+        }
 
         $typeRaw = $config['type'] ?? 'periodic';
         $type = is_string($typeRaw) ? $typeRaw : 'periodic';
@@ -72,7 +76,7 @@ class PeriodicSSEEmitter
         if ($type === 'infinite' && isset($config['event_generator']) && is_callable($config['event_generator'])) {
             $this->setupInfiniteEmitter($config, $onEvent, $interval, $jitter, $periodicTimerId, $sseResponse);
         } else {
-            $this->setupFiniteEmitter($config, $mock, $onEvent, $onError, $interval, $jitter, $periodicTimerId, $sseResponse);
+            $this->setupFiniteEmitter($config, $mock, $onEvent, $onError, $interval, $jitter, $periodicTimerId, $sseResponse, $onMidStreamError);
         }
     }
 
@@ -170,6 +174,7 @@ class PeriodicSSEEmitter
       * @param float $jitter
       * @param string|null $periodicTimerId
       * @param SSEResponse $sseResponse
+      * @param callable|null $onMidStreamError
       *
       * @param-out string $periodicTimerId
       */
@@ -181,7 +186,8 @@ class PeriodicSSEEmitter
         float $interval,
         float $jitter,
         ?string &$periodicTimerId,
-        SSEResponse $sseResponse
+        SSEResponse $sseResponse,
+        ?callable $onMidStreamError = null
     ): void {
         $rawEvents = $config['events'] ?? [];
         if (! is_array($rawEvents)) {
@@ -210,7 +216,8 @@ class PeriodicSSEEmitter
                 $jitter,
                 $interval,
                 &$periodicTimerId,
-                $sseResponse
+                $sseResponse,
+                $onMidStreamError
             ) {
                 try {
                     $sseResponse->getBody()->tell();
@@ -229,10 +236,19 @@ class PeriodicSSEEmitter
                         $periodicTimerId = null;
                     }
 
-                    if ($mock->shouldFail() && $autoClose) {
+                    if ($mock->shouldFail()) {
                         $error = $mock->getError() ?? 'Connection closed';
-                        if ($onError !== null) {
-                            $onError($error);
+                        
+                        if ($autoClose) {
+                            if ($onError !== null) {
+                                $onError($error);
+                            }
+                        } else {
+                            if ($onMidStreamError !== null) {
+                                $onMidStreamError($error);
+                            } elseif ($onError !== null) {
+                                $onError($error);
+                            }
                         }
                     }
 

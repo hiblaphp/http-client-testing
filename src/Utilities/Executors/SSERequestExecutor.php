@@ -47,6 +47,25 @@ class SSERequestExecutor
     ): PromiseInterface {
         $method = 'GET';
 
+        // Check for a matching mock FIRST before evaluating retry settings
+        $match = $this->requestMatcher->findMatchingMock($mockedRequests, $method, $url, $curlOptions);
+
+        if ($match === null) {
+            $this->requestRecorder->recordRequest($method, $url, $curlOptions);
+            
+            return $this->handleNoMatch(
+                $method,
+                $url,
+                $curlOptions,
+                $mockedRequests,
+                $globalSettings,
+                $parentSSE,
+                $onEvent,
+                $onError,
+                $reconnectConfig
+            );
+        }
+
         if ($this->shouldUseRetry($reconnectConfig)) {
             /** @var \Hibla\HttpClient\SSE\SSEReconnectConfig $reconnectConfig */
             return $this->executeWithRetry(
@@ -57,21 +76,14 @@ class SSERequestExecutor
                 $onEvent,
                 $onError,
                 $reconnectConfig,
-                $parentSSE
+                $parentSSE,
+                $match
             );
         }
 
-        return $this->executeSimple(
-            $url,
-            $curlOptions,
-            $mockedRequests,
-            $globalSettings,
-            $method,
-            $onEvent,
-            $onError,
-            $parentSSE,
-            $reconnectConfig
-        );
+        $this->requestRecorder->recordRequest($method, $url, $curlOptions);
+
+        return $this->handleMatchedSSE($match, $mockedRequests, $onEvent, $onError);
     }
 
     /**
@@ -81,45 +93,6 @@ class SSERequestExecutor
     {
         return $reconnectConfig instanceof \Hibla\HttpClient\SSE\SSEReconnectConfig
             && $reconnectConfig->enabled;
-    }
-
-    /**
-     * @param array<int, mixed> $curlOptions
-     * @param list<MockedRequest> $mockedRequests
-     * @param array<string, mixed> $globalSettings
-     * @param mixed $reconnectConfig
-     * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
-     */
-    private function executeSimple(
-        string $url,
-        array $curlOptions,
-        array &$mockedRequests,
-        array $globalSettings,
-        string $method,
-        ?callable $onEvent,
-        ?callable $onError,
-        ?callable $parentSSE,
-        $reconnectConfig
-    ): PromiseInterface {
-        $this->requestRecorder->recordRequest($method, $url, $curlOptions);
-
-        $match = $this->requestMatcher->findMatchingMock($mockedRequests, $method, $url, $curlOptions);
-
-        if ($match !== null) {
-            return $this->handleMatchedSSE($match, $mockedRequests, $onEvent, $onError);
-        }
-
-        return $this->handleNoMatch(
-            $method,
-            $url,
-            $curlOptions,
-            $mockedRequests,
-            $globalSettings,
-            $parentSSE,
-            $onEvent,
-            $onError,
-            $reconnectConfig
-        );
     }
 
     /**
@@ -189,6 +162,7 @@ class SSERequestExecutor
      * @param array<int, mixed> $curlOptions
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
+     * @param array{mock: MockedRequest, index: int}|null $initialMatch
      * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
      */
     private function executeWithRetry(
@@ -199,11 +173,12 @@ class SSERequestExecutor
         ?callable $onEvent,
         ?callable $onError,
         \Hibla\HttpClient\SSE\SSEReconnectConfig $reconnectConfig,
-        ?callable $parentSSE
+        ?callable $parentSSE,
+        ?array $initialMatch = null
     ): PromiseInterface {
         $method = 'GET';
 
-        $mockProvider = $this->createMockProvider($method, $url, $curlOptions, $mockedRequests);
+        $mockProvider = $this->createMockProvider($method, $url, $curlOptions, $mockedRequests, $initialMatch);
 
         $onReconnectCallback = $reconnectConfig->onReconnect;
 
@@ -219,34 +194,53 @@ class SSERequestExecutor
     /**
      * @param array<int, mixed> $curlOptions
      * @param list<MockedRequest> $mockedRequests
+     * @param array{mock: MockedRequest, index: int}|null $initialMatch
      */
     private function createMockProvider(
         string $method,
         string $url,
         array $curlOptions,
-        array &$mockedRequests
+        array &$mockedRequests,
+        ?array $initialMatch = null
     ): callable {
         return function (int $attemptNumber, ?string $lastEventId = null) use (
             $method,
             $url,
             $curlOptions,
-            &$mockedRequests
+            &$mockedRequests,
+            $initialMatch
         ): MockedRequest {
             $modifiedOptions = $this->addLastEventId($curlOptions, $lastEventId);
 
-            $match = $this->requestMatcher->findMatchingMock($mockedRequests, $method, $url, $modifiedOptions);
+            if ($attemptNumber === 1 && $initialMatch !== null) {
+                $mock = $initialMatch['mock'];
+                $index = array_search($mock, $mockedRequests, true);
 
-            if ($match === null) {
-                throw new MockAssertionException(
-                    "No SSE mock found for attempt #{$attemptNumber}: {$method} {$url}"
-                );
+                if ($index === false) {
+                    $match = $this->requestMatcher->findMatchingMock($mockedRequests, $method, $url, $modifiedOptions);
+                    if ($match === null) {
+                        throw new MockAssertionException("No SSE mock found for attempt #{$attemptNumber}: {$method} {$url}");
+                    }
+                    $mock = $match['mock'];
+                    $index = $match['index'];
+                }
+            } else {
+                $match = $this->requestMatcher->findMatchingMock($mockedRequests, $method, $url, $modifiedOptions);
+
+                if ($match === null) {
+                    throw new MockAssertionException(
+                        "No SSE mock found for attempt #{$attemptNumber}: {$method} {$url}"
+                    );
+                }
+
+                $mock = $match['mock'];
+                $index = $match['index'];
             }
 
-            $mock = $match['mock'];
             $this->requestRecorder->recordRequest($method, $url, $modifiedOptions);
 
             if (! $mock->isPersistent()) {
-                array_splice($mockedRequests, $match['index'], 1);
+                array_splice($mockedRequests, (int)$index, 1);
             }
 
             if (! $mock->isSSE()) {

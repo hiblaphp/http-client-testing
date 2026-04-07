@@ -26,19 +26,23 @@ class ImmediateSSEEmitter
      * @param callable|null $onEvent
      * @param string|null &$lastEventId
      * @param int|null &$retryInterval
+     * @param callable|null $onMidStreamError
      */
     public function emit(
         Promise $promise,
         MockedRequest $mock,
         ?callable $onEvent,
         ?string &$lastEventId,
-        ?int &$retryInterval
+        ?int &$retryInterval,
+        ?callable $onMidStreamError = null
     ): void {
         $resource = fopen('php://temp', 'r+b');
 
         if ($resource === false) {
-            $promise->reject(new \RuntimeException('Failed to open temporary stream for SSE emulation.'));
-
+            if ($promise->isPending()) {
+                $promise->reject(new \RuntimeException('Failed to open temporary stream for SSE emulation.'));
+            }
+            
             return;
         }
 
@@ -49,7 +53,9 @@ class ImmediateSSEEmitter
             $mock->getHeaders()
         );
 
-        $promise->resolve($sseResponse);
+        if ($promise->isPending()) {
+            $promise->resolve($sseResponse);
+        }
 
         $sseContent = $this->formatter->formatEvents($mock->getSSEEvents());
         $parser = new SSEParser();
@@ -66,6 +72,11 @@ class ImmediateSSEEmitter
             if ($onEvent !== null) {
                 $onEvent($event);
             }
+        }
+
+        // Trigger a mid-stream drop after sending the events if the mock is configured to fail
+        if ($mock->shouldFail() && $onMidStreamError !== null) {
+            $onMidStreamError($mock->getError() ?? 'Connection lost mid-stream');
         }
     }
 }
