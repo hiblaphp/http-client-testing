@@ -9,8 +9,6 @@ use Hibla\HttpClient\Interfaces\Cookie\CookieJarInterface;
 use Hibla\HttpClient\Interfaces\ResponseInterface;
 use Hibla\HttpClient\Interfaces\SSEResponseInterface;
 use Hibla\HttpClient\Interfaces\StreamingResponseInterface;
-use Hibla\HttpClient\Response;
-use Hibla\HttpClient\StreamingResponse;
 use Hibla\HttpClient\SSE\CancelableSSEPromise;
 use Hibla\HttpClient\SSE\SSEReconnectConfig;
 use Hibla\HttpClient\Testing\Interfaces\AssertsCookiesInterface;
@@ -408,18 +406,16 @@ class TestingHttpHandler extends HttpHandler implements
     {
         $mockedRequests = array_values($this->mockedRequests);
 
-        /** @var PromiseInterface<ResponseInterface> $promise */
-        $promise = $this->requestExecutor->executeSendRequest(
+        /** @phpstan-ignore-next-line */
+        return $this->requestExecutor->executeSendRequest(
             $url,
             $curlOptions,
             $mockedRequests,
             $this->globalSettings,
             $retryConfig,
-            /** @var (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>) $parentSendRequest */
+            /** @phpstan-ignore-next-line */
             fn (string $u, array $o, ?RetryConfig $r): PromiseInterface => parent::sendRequest($u, $o, $r)
         );
-
-        return $promise;
     }
 
     /**
@@ -437,18 +433,16 @@ class TestingHttpHandler extends HttpHandler implements
             $options['on_chunk'] = $onChunk;
         }
 
-        /** @var PromiseInterface<StreamingResponseInterface> $promise */
-        $promise = $this->requestExecutor->executeSendRequest(
+        /** @phpstan-ignore-next-line */
+        return $this->requestExecutor->executeSendRequest(
             $url,
             $options,
             $mockedRequests,
             $this->globalSettings,
             null,
-            /** @var (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>) $parentSendRequest */
+            /** @phpstan-ignore-next-line */
             fn (string $u, array $o, ?RetryConfig $r): PromiseInterface => parent::stream($u, $o, $onChunk)
         );
-
-        return $promise;
     }
 
     /**
@@ -463,18 +457,16 @@ class TestingHttpHandler extends HttpHandler implements
             $options['on_progress'] = $onProgress;
         }
 
-        /** @var PromiseInterface<array{url: string, status: int, headers: array<string, array<string>|string>, protocol_version: string|null}> $promise */
-        $promise = $this->requestExecutor->executeSendRequest(
+        /** @phpstan-ignore-next-line */
+        return $this->requestExecutor->executeSendRequest(
             $url,
             $options,
             $mockedRequests,
             $this->globalSettings,
             null,
-            /** @var (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>) $parentSendRequest */
+            /** @phpstan-ignore-next-line */
             fn (string $u, array $o, ?RetryConfig $r): PromiseInterface => parent::upload($u, $source, $o, $onProgress)
         );
-
-        return $promise;
     }
 
     /**
@@ -484,7 +476,7 @@ class TestingHttpHandler extends HttpHandler implements
      * @param string|null $destination The destination path (auto-generated if null).
      * @param array<int|string, mixed> $options
      * @param (callable(\Hibla\HttpClient\ValueObjects\DownloadProgress): void)|null $onProgress
-     * @return PromiseInterface<array{file: string, status: int, headers: array<string, array<string>|string>, protocol_version: string|null, size: int|false}>
+     * @return PromiseInterface<array{file: string, status: int, headers: array<mixed>, protocol_version: string|null, size: int|false}>
      */
     public function download(string $url, ?string $destination = null, array $options = [], ?callable $onProgress = null): PromiseInterface
     {
@@ -502,18 +494,16 @@ class TestingHttpHandler extends HttpHandler implements
             $options['on_progress'] = $onProgress;
         }
 
-        /** @var PromiseInterface<array{file: string, status: int, headers: array<string, array<string>|string>, protocol_version: string|null, size: int|false}> $promise */
-        $promise = $this->requestExecutor->executeSendRequest(
+        /** @phpstan-ignore-next-line */
+        return $this->requestExecutor->executeSendRequest(
             $url,
             $options,
             $mockedRequests,
             $this->globalSettings,
             null,
-            /** @var (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>) $parentSendRequest */
+            /** @phpstan-ignore-next-line */
             fn (string $u, array $o, ?RetryConfig $r): PromiseInterface => parent::download($u, $destination, $o, $onProgress)
         );
-
-        return $promise;
     }
 
     /**
@@ -540,7 +530,7 @@ class TestingHttpHandler extends HttpHandler implements
             $this->globalSettings,
             $onEvent,
             $onError,
-            fn (string $u, array $o, ?callable $onEv, ?callable $onErr, ?SSEReconnectConfig $rec) => parent::sse($u, $o, $onEv, $onErr, $rec),
+            fn (string $u, array $o, ?callable $onEv, ?callable $onErr, ?SSEReconnectConfig $rec): PromiseInterface => parent::sse($u, $o, $onEv, $onErr, $rec),
             $reconnectConfig
         );
 
