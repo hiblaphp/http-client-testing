@@ -99,7 +99,7 @@ class RetryableSSEResponseFactory
                 } elseif ($onError !== null) {
                     $onError('Mock provider error: ' . $e->getMessage());
                 }
-                
+
                 return;
             }
 
@@ -172,7 +172,7 @@ class RetryableSSEResponseFactory
 
                         if ($isRetryable && $attempt < $reconnectConfig->maxAttempts) {
                             $attempt++;
-                            
+
                             $retryDelay = $retryInterval !== null
                                 ? ($retryInterval / 1000.0)
                                 : $reconnectConfig->calculateDelay($attempt);
@@ -241,7 +241,7 @@ class RetryableSSEResponseFactory
             $errorMessage = $networkConditions['error_message'] ?? 'Network failure';
             $exception = new Exception($errorMessage);
             $isRetryable = $reconnectConfig->isRetryableError($exception);
-        } elseif ($mock->shouldFail() && \count($mock->getSSEEvents()) === 0 && !$mock->hasStreamConfig()) {
+        } elseif ($mock->shouldFail() && \count($mock->getSSEEvents()) === 0 && ! $mock->hasStreamConfig()) {
             $isHandshakeFailure = true;
             $errorMessage = $mock->getError() ?? 'SSE connection failed';
             $exception = new Exception($errorMessage);

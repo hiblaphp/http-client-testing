@@ -52,7 +52,7 @@ class SSERequestExecutor
 
         if ($match === null) {
             $this->requestRecorder->recordRequest($method, $url, $curlOptions);
-            
+
             return $this->handleNoMatch(
                 $method,
                 $url,

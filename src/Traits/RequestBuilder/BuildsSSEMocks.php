@@ -176,11 +176,13 @@ trait BuildsSSEMocks
         $this->respondWithHeader('Cache-Control', 'no-cache');
         $this->respondWithHeader('Connection', 'keep-alive');
 
-        // Add retry directive as first event
-        $retryEvent = ['retry' => $retryMs];
-        $allEvents = array_merge([$retryEvent], $events);
+        if ($events === []) {
+            $events = [['retry' => $retryMs, 'data' => '']];
+        } else {
+            $events[0]['retry'] = $retryMs;
+        }
 
-        $this->getRequest()->setSSEEvents($allEvents);
+        $this->getRequest()->setSSEEvents($events);
 
         return $this;
     }

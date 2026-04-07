@@ -238,7 +238,7 @@ class PeriodicSSEEmitter
 
                     if ($mock->shouldFail()) {
                         $error = $mock->getError() ?? 'Connection closed';
-                        
+
                         if ($autoClose) {
                             if ($onError !== null) {
                                 $onError($error);

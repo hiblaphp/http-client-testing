@@ -88,8 +88,8 @@ describe('Advanced SSE Mocking', function () {
             ->wait()
         ;
 
-        expect($events)->toHaveCount(2);
+        expect($events)->toHaveCount(1);
         expect($events[0]->retry)->toBe(5000);
-        expect($events[1]->data)->toBe('message');
+        expect($events[0]->data)->toBe('message');
     });
 });

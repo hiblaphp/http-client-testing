@@ -7,9 +7,7 @@ namespace Hibla\HttpClient\Testing\Utilities\Factories\SSE;
 use Hibla\EventLoop\Loop;
 use Hibla\HttpClient\Exceptions\NetworkException;
 use Hibla\HttpClient\SSE\SSEResponse;
-use Hibla\HttpClient\Stream;
 use Hibla\HttpClient\Testing\MockedRequest;
-use Hibla\HttpClient\Testing\Utilities\Formatters\SSEEventFormatter;
 use Hibla\HttpClient\Testing\Utilities\Handlers\DelayCalculator;
 use Hibla\HttpClient\Testing\Utilities\Handlers\NetworkSimulationHandler;
 use Hibla\Promise\Interfaces\PromiseInterface;
@@ -20,14 +18,12 @@ class SSEResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
     private DelayCalculator $delayCalculator;
-    private SSEEventFormatter $formatter;
     private PeriodicSSEEmitter $periodicEmitter;
 
     public function __construct(NetworkSimulationHandler $networkHandler)
     {
         $this->networkHandler = $networkHandler;
         $this->delayCalculator = new DelayCalculator();
-        $this->formatter = new SSEEventFormatter();
         $this->periodicEmitter = new PeriodicSSEEmitter();
     }
 
@@ -37,21 +33,6 @@ class SSEResponseFactory
      * @return PromiseInterface<SSEResponse>
      */
     public function create(
-        MockedRequest $mock,
-        ?callable $onEvent,
-        ?callable $onError
-    ): PromiseInterface {
-        if ($mock->hasStreamConfig()) {
-            return $this->createPeriodicSSE($mock, $onEvent, $onError);
-        }
-
-        return $this->createImmediateSSE($mock, $onEvent, $onError);
-    }
-
-    /**
-     * @return PromiseInterface<SSEResponse>
-     */
-    private function createImmediateSSE(
         MockedRequest $mock,
         ?callable $onEvent,
         ?callable $onError
@@ -69,107 +50,13 @@ class SSEResponseFactory
 
         /** @var string|null $timerId */
         $timerId = null;
-
-        $promise->onCancel(function () use (&$timerId) {
-            if ($timerId !== null) {
-                Loop::cancelTimer($timerId);
-            }
-        });
-
-        if ($networkConditions['should_fail']) {
-            $timerId = Loop::addTimer($totalDelay, function () use (
-                $promise,
-                $networkConditions,
-                $onError
-            ) {
-                if ($promise->isCancelled()) {
-                    return;
-                }
-
-                $error = $networkConditions['error_message'] ?? 'Network failure';
-                if ($onError !== null) {
-                    $onError($error);
-                }
-                $promise->reject(new NetworkException($error));
-            });
-
-            return $promise;
-        }
-
-        $timerId = Loop::addTimer($totalDelay, function () use ($promise, $mock, $onEvent, $onError) {
-            if ($promise->isCancelled()) {
-                return;
-            }
-
-            try {
-                if ($mock->shouldFail()) {
-                    $error = $mock->getError() ?? 'Mocked SSE failure';
-                    if ($onError !== null) {
-                        $onError($error);
-                    }
-
-                    throw new NetworkException($error);
-                }
-
-                $sseContent = $this->formatter->formatEvents($mock->getSSEEvents());
-
-                $stream = new Stream();
-                $stream->getHandler()->writeToBuffer($sseContent);
-
-                $stream->getHandler()->markEof();
-
-                $sseResponse = new SSEResponse($stream, $mock->getStatusCode(), $mock->getHeaders());
-                $promise->resolve($sseResponse);
-
-                Loop::addTimer(0, function () use ($mock, $onEvent) {
-                    if ($onEvent !== null) {
-                        foreach ($mock->getSSEEvents() as $eventData) {
-                            $event = $this->formatter->createSSEEvent($eventData);
-                            $onEvent($event);
-                        }
-                    }
-                });
-            } catch (Throwable $e) {
-                $promise->reject($e);
-            }
-        });
-
-        return $promise;
-    }
-
-    /**
-     * @return PromiseInterface<SSEResponse>
-     */
-    private function createPeriodicSSE(
-        MockedRequest $mock,
-        ?callable $onEvent,
-        ?callable $onError
-    ): PromiseInterface {
-        /** @var Promise<SSEResponse> $promise */
-        $promise = new Promise();
-
-        $config = $mock->getSSEStreamConfig();
-        if ($config === null) {
-            throw new \RuntimeException('SSE stream config is required');
-        }
-
-        $networkConditions = $this->networkHandler->simulate();
-        $globalDelay = $this->networkHandler->generateGlobalRandomDelay();
-        $initialDelay = $this->delayCalculator->calculateTotalDelay(
-            $mock,
-            $networkConditions,
-            $globalDelay
-        );
-
-        /** @var string|null $initialTimerId */
-        $initialTimerId = null;
         /** @var string|null $periodicTimerId */
         $periodicTimerId = null;
 
-        $promise->onCancel(function () use (&$initialTimerId, &$periodicTimerId) {
-            if ($initialTimerId !== null) {
-                Loop::cancelTimer($initialTimerId);
-                $initialTimerId = null;
+        $promise->onCancel(function () use (&$timerId, &$periodicTimerId) {
+            if ($timerId !== null) {
+                Loop::cancelTimer($timerId);
+                $timerId = null;
             }
             if ($periodicTimerId !== null) {
                 Loop::cancelTimer($periodicTimerId);
@@ -177,49 +64,53 @@ class SSEResponseFactory
             }
         });
 
+        // Determine if this is a handshake failure (fails before establishing connection)
+        $isHandshakeFailure = false;
+        $errorMsg = '';
+
         if ($networkConditions['should_fail']) {
-            $initialTimerId = Loop::addTimer($initialDelay, function () use (
+            $isHandshakeFailure = true;
+            $errorMsg = $networkConditions['error_message'] ?? 'Network failure';
+        } elseif ($mock->getStatusCode() >= 400) {
+            $isHandshakeFailure = true;
+            $errorMsg = $mock->getError() ?? "HTTP {$mock->getStatusCode()} Failure";
+        } elseif ($mock->shouldFail()) {
+            if ($mock->hasStreamConfig()) {
+                $config = $mock->getSSEStreamConfig();
+                $autoClose = isset($config['auto_close']) && is_bool($config['auto_close']) ? $config['auto_close'] : false;
+                if (! $autoClose) {
+                    $isHandshakeFailure = true;
+                    $errorMsg = $mock->getError() ?? 'Mocked SSE failure';
+                }
+            } else {
+                if (count($mock->getSSEEvents()) === 0) {
+                    $isHandshakeFailure = true;
+                    $errorMsg = $mock->getError() ?? 'Mocked SSE failure';
+                }
+            }
+        }
+
+        if ($isHandshakeFailure) {
+            $timerId = Loop::addTimer($totalDelay, function () use (
                 $promise,
-                $networkConditions,
-                $onError,
+                $errorMsg,
+                $onError
             ) {
                 if ($promise->isCancelled()) {
                     return;
                 }
 
-                $error = $networkConditions['error_message'] ?? 'Network failure';
                 if ($onError !== null) {
-                    $onError($error);
+                    $onError($errorMsg);
                 }
-                $promise->reject(new NetworkException($error));
+                $promise->reject(new NetworkException($errorMsg));
             });
 
             return $promise;
         }
 
-        $autoClose = isset($config['auto_close']) && is_bool($config['auto_close']) ? $config['auto_close'] : false;
-
-        if ($mock->shouldFail() && ! $autoClose) {
-            $initialTimerId = Loop::addTimer($initialDelay, function () use (
-                $promise,
-                $mock,
-                $onError,
-            ) {
-                if ($promise->isCancelled()) {
-                    return;
-                }
-
-                $error = $mock->getError() ?? 'Mocked SSE failure';
-                if ($onError !== null) {
-                    $onError($error);
-                }
-                $promise->reject(new NetworkException($error));
-            });
-
-            return $promise;
-        }
-
-        $initialTimerId = Loop::addTimer($initialDelay, function () use (
+        // If not a handshake failure, proceed to open the stream
+        $timerId = Loop::addTimer($totalDelay, function () use (
             $promise,
             $mock,
             $onEvent,
@@ -231,12 +122,29 @@ class SSEResponseFactory
             }
 
             try {
-                $this->periodicEmitter->emit($promise, $mock, $onEvent, $onError, $periodicTimerId);
+                if ($mock->hasStreamConfig()) {
+                    $this->periodicEmitter->emit($promise, $mock, $onEvent, $onError, $periodicTimerId);
+                } else {
+                    $lastEventId = null;
+                    $retryInterval = null;
+                    $immediateEmitter = new ImmediateSSEEmitter();
+
+                    // For non-retryable SSE, if it drops mid-stream, trigger the user's onError
+                    $onMidStreamError = function (string $err) use ($onError) {
+                        if ($onError !== null) {
+                            $onError($err);
+                        }
+                    };
+
+                    $immediateEmitter->emit($promise, $mock, $onEvent, $lastEventId, $retryInterval, $onMidStreamError);
+                }
             } catch (Throwable $e) {
                 if ($onError !== null) {
                     $onError($e->getMessage());
                 }
-                $promise->reject($e);
+                if ($promise->isPending()) {
+                    $promise->reject($e);
+                }
             }
         });
 
