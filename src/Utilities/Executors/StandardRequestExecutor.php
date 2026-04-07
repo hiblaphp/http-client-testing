@@ -109,6 +109,7 @@ class StandardRequestExecutor
     private function extractMethod(array $curlOptions): string
     {
         $method = $curlOptions[CURLOPT_CUSTOMREQUEST] ?? 'GET';
+
         return is_string($method) ? $method : 'GET';
     }
 

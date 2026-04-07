@@ -109,7 +109,7 @@ class ResponseTypeHandler
         $onChunkRaw = $options['on_chunk'] ?? $options['onChunk'] ?? null;
         $onChunk = is_callable($onChunkRaw) ? $onChunkRaw : null;
 
-        $createStreamFn = $createStream ?? fn(string $body): StreamInterface => $this->createStream($body);
+        $createStreamFn = $createStream ?? fn (string $body): StreamInterface => $this->createStream($body);
 
         return $this->responseFactory->createMockedStream($mock, $onChunk, $createStreamFn);
     }
@@ -123,7 +123,7 @@ class ResponseTypeHandler
     ): PromiseInterface {
         $responsePromise = $this->responseFactory->createMockedResponse($mock);
 
-        $mappedPromise = $responsePromise->then(fn(Response $response): Response => $response);
+        $mappedPromise = $responsePromise->then(fn (Response $response): Response => $response);
 
         $mappedPromise->onCancel($responsePromise->cancel(...));
 

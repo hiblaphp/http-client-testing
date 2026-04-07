@@ -238,7 +238,7 @@ class RetryableRequestExecutor
 
         $stream = $this->createStream($body);
 
-        if (!$stream instanceof StreamInterface) {
+        if (! $stream instanceof StreamInterface) {
             throw new \RuntimeException('Created stream does not implement Hibla StreamInterface');
         }
 

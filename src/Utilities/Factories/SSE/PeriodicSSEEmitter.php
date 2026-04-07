@@ -78,7 +78,7 @@ class PeriodicSSEEmitter
 
     /**
      * Sets up an infinite event stream.
-     * 
+     *
      * @param array<string, mixed> $config
      * @param callable|null $onEvent
      * @param float $interval
@@ -98,7 +98,7 @@ class PeriodicSSEEmitter
         $maxEvents = isset($config['max_events']) && is_numeric($config['max_events']) ? (int) $config['max_events'] : null;
         $eventIndex = 0;
 
-        if (!is_callable($eventGenerator)) {
+        if (! is_callable($eventGenerator)) {
             return;
         }
 
@@ -136,7 +136,7 @@ class PeriodicSSEEmitter
 
                 /** @var array{id?: string, event?: string, data?: string, retry?: int}|null $eventData */
                 $eventData = $eventGenerator($eventIndex);
-                
+
                 if (is_array($eventData)) {
                     $formattedEvent = $this->formatter->formatEvents([$eventData]);
 
@@ -159,20 +159,20 @@ class PeriodicSSEEmitter
         );
     }
 
-   /**
-     * Sets up a finite stream from a predefined list of events.
-     * 
-     * @param array<string, mixed> $config
-     * @param MockedRequest $mock
-     * @param callable|null $onEvent
-     * @param callable|null $onError
-     * @param float $interval
-     * @param float $jitter
-     * @param string|null $periodicTimerId
-     * @param SSEResponse $sseResponse
-     * 
-     * @param-out string $periodicTimerId 
-     */
+    /**
+      * Sets up a finite stream from a predefined list of events.
+      *
+      * @param array<string, mixed> $config
+      * @param MockedRequest $mock
+      * @param callable|null $onEvent
+      * @param callable|null $onError
+      * @param float $interval
+      * @param float $jitter
+      * @param string|null $periodicTimerId
+      * @param SSEResponse $sseResponse
+      *
+      * @param-out string $periodicTimerId
+      */
     private function setupFiniteEmitter(
         array $config,
         MockedRequest $mock,

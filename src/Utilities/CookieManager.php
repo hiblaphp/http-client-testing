@@ -674,7 +674,7 @@ class CookieManager
 
     /**
      * Asserts that a cookie was NOT sent in a request.
-     * 
+     *
      * @param string $name Cookie name
      * @param array<int|string, mixed> $curlOptions cURL options from the request
      */
@@ -715,7 +715,7 @@ class CookieManager
 
     /**
      * Asserts deep cookie attributes within the jar.
-     * 
+     *
      * @param string $name Cookie name
      * @param array<string, mixed> $attributes Key-value pairs of expected attributes
      * @param string $jarName Jar name

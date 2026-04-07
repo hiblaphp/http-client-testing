@@ -38,6 +38,7 @@ class ImmediateSSEEmitter
 
         if ($resource === false) {
             $promise->reject(new \RuntimeException('Failed to open temporary stream for SSE emulation.'));
+
             return;
         }
 

@@ -19,8 +19,8 @@ use Hibla\HttpClient\Testing\Utilities\Factories\StreamingResponseFactory;
 use Hibla\HttpClient\Testing\Utilities\Factories\UploadResponseFactory;
 use Hibla\HttpClient\Testing\Utilities\Handlers\NetworkSimulationHandler;
 use Hibla\HttpClient\ValueObjects\DownloadProgress;
-use Hibla\HttpClient\ValueObjects\UploadProgress;
 use Hibla\HttpClient\ValueObjects\RetryConfig;
+use Hibla\HttpClient\ValueObjects\UploadProgress;
 use Hibla\Promise\Interfaces\PromiseInterface;
 
 class ResponseFactory
@@ -82,7 +82,7 @@ class ResponseFactory
      * @param string $destination
      * @param FileManager $fileManager
      * @param (callable(DownloadProgress): void)|null $onProgress
-     * 
+     *
      * @return PromiseInterface<array{file: string, status: int, headers: array<string, array<string>|string>, size: int, protocol_version: string}>
      */
     public function createMockedDownload(
@@ -99,7 +99,7 @@ class ResponseFactory
      * @param string $source
      * @param string $url
      * @param (callable(UploadProgress): void)|null $onProgress
-     * 
+     *
      * @return PromiseInterface<array{url: string, status: int, headers: array<string, array<string>|string>, protocol_version: string|null}>
      */
     public function createMockedUpload(

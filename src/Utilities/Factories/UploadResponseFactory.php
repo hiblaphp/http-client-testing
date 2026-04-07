@@ -116,7 +116,7 @@ class UploadResponseFactory
 
     /**
      * Recursively simulates the upload progress using the Event Loop.
-     * 
+     *
      * @param Promise<array{url: string, status: int, headers: array<string, string|array<string>>, protocol_version: string|null}> $promise
      */
     private function deliverUploadProgressAsync(
