@@ -32,7 +32,7 @@ class ResponseTypeHandler
      * @param array{mock: MockedRequest, index: int} $match
      * @param array<string, mixed> $options
      * @param list<MockedRequest> $mockedRequests
-     * @return PromiseInterface<Response>|PromiseInterface<StreamingResponse>|PromiseInterface<array<string, mixed>>
+     * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     public function handleMockedResponse(
         array $match,
@@ -65,9 +65,9 @@ class ResponseTypeHandler
 
     /**
      * @param MockedRequest $mock
-     * @param array<int|string, mixed> $options
+     * @param array<string, mixed> $options
      * @param string $url
-     * @return PromiseInterface<array{url: string, status: int, headers: array<string, string>, protocol_version: string|null}>
+     * @return PromiseInterface<array{url: string, status: int, headers: array<string, array<string>|string>, protocol_version: string|null}>
      */
     private function handleUpload(MockedRequest $mock, array $options, string $url): PromiseInterface
     {
@@ -83,8 +83,8 @@ class ResponseTypeHandler
 
     /**
      * @param MockedRequest $mock
-     * @param array<int|string, mixed> $options
-     * @return PromiseInterface<array{file: string, status: int, headers: array<string, string>, size: int, protocol_version: string}>
+     * @param array<string, mixed> $options
+     * @return PromiseInterface<array{file: string, status: int, headers: array<string, array<string>|string>, size: int, protocol_version: string}>
      */
     private function handleDownload(MockedRequest $mock, array $options): PromiseInterface
     {
@@ -100,7 +100,7 @@ class ResponseTypeHandler
 
     /**
      * @param MockedRequest $mock
-     * @param array<int|string, mixed> $options
+     * @param array<string, mixed> $options
      * @param (callable(string): StreamInterface)|null $createStream
      * @return PromiseInterface<StreamingResponse>
      */
