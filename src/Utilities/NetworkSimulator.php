@@ -201,7 +201,7 @@ class NetworkSimulator
      *
      * @param array<float> $delayRange Array with [min, max] delay values
      */
-    public function setRandomDelay(array $delayRange): void
+    public function setrandomLatency(array $delayRange): void
     {
         $this->settings['random_delay'] = $delayRange;
     }

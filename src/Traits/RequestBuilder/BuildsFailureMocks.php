@@ -87,7 +87,7 @@ trait BuildsFailureMocks
         }
         $mock->setError($error);
         $mock->setRetryable($retryable);
-        $mock->setDelay(0.1);
+        $mock->setLatency(0.1);
 
         return $mock;
     }

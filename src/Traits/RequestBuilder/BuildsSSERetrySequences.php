@@ -77,7 +77,7 @@ trait BuildsSSERetrySequences
             if (is_string($failure)) {
                 $mock->setError($failure . " (attempt {$attemptNumber})");
                 $mock->setRetryable(true);
-                $mock->setDelay(0.1);
+                $mock->setLatency(0.1);
             } elseif (is_array($failure)) {
                 $error = $failure['error'] ?? 'SSE connection failed';
                 $retryable = $failure['retryable'] ?? true;
@@ -85,7 +85,7 @@ trait BuildsSSERetrySequences
 
                 $mock->setError($error . " (attempt {$attemptNumber})");
                 $mock->setRetryable($retryable);
-                $mock->setDelay($delay);
+                $mock->setLatency($delay);
             }
 
             $this->getHandler()->addMockedRequest($mock);
@@ -178,7 +178,7 @@ trait BuildsSSERetrySequences
             if ($shouldFail) {
                 $mock->setError("Intermittent SSE failure on attempt {$attemptNumber}");
                 $mock->setRetryable(true);
-                $mock->setDelay(0.1);
+                $mock->setLatency(0.1);
             } else {
                 $data = json_encode([
                     'success' => true,
@@ -274,7 +274,7 @@ trait BuildsSSERetrySequences
                 $mock->setRetryable(true);
             } else {
                 // Moderate delay = slow connection with some data
-                $mock->setDelay($delay);
+                $mock->setLatency($delay);
                 $data = json_encode([
                     'attempt' => $i,
                     'delay' => round($delay, 2),
@@ -377,7 +377,7 @@ trait BuildsSSERetrySequences
             } else {
                 $mock->setError($failureType['message'] . " (attempt {$i})");
                 $mock->setRetryable(true);
-                $mock->setDelay(0.1);
+                $mock->setLatency(0.1);
             }
 
             $this->getHandler()->addMockedRequest($mock);
@@ -430,7 +430,7 @@ trait BuildsSSERetrySequences
             $mock->addResponseHeader('Content-Type', 'application/json');
             $mock->addResponseHeader('Retry-After', (string) $retryAfter);
             $mock->setRetryable(true);
-            $mock->setDelay(0.1);
+            $mock->setLatency(0.1);
 
             $this->getHandler()->addMockedRequest($mock);
         }
@@ -469,7 +469,7 @@ trait BuildsSSERetrySequences
         $mock->asSSE();
         $mock->setError($error);
         $mock->setRetryable(true);
-        $mock->setDelay(0.1);
+        $mock->setLatency(0.1);
         $mock->addResponseHeader('Content-Type', 'text/event-stream');
         $mock->addResponseHeader('Cache-Control', 'no-cache');
         $mock->addResponseHeader('Connection', 'keep-alive');

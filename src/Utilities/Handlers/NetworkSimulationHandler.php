@@ -43,8 +43,8 @@ class NetworkSimulationHandler
         return $result;
     }
 
-    public function generateGlobalRandomDelay(): float
+    public function generateGlobalrandomLatency(): float
     {
-        return $this->handler !== null ? $this->handler->generateGlobalRandomDelay() : 0.0;
+        return $this->handler !== null ? $this->handler->generateGlobalrandomLatency() : 0.0;
     }
 }

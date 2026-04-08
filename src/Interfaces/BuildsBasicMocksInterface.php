@@ -51,19 +51,19 @@ interface BuildsBasicMocksInterface
     public function respondXml(string|\SimpleXMLElement $xml): static;
 
     /**
-     * Add a delay before responding.
+     * Add a latency before responding.
      */
-    public function delay(float $seconds): static;
+    public function latency(float $seconds): static;
 
     /**
-     * Set a random delay range for realistic network simulation.
+     * Set a random latency range for realistic network simulation.
      */
-    public function randomDelay(float $minSeconds, float $maxSeconds): static;
+    public function randomLatency(float $minSeconds, float $maxSeconds): static;
 
     /**
-     * Create a persistent mock with random delays for each request.
+     * Create a persistent mock with random latencies for each request.
      */
-    public function randomPersistentDelay(float $minSeconds, float $maxSeconds): static;
+    public function randomPersistentLatency(float $minSeconds, float $maxSeconds): static;
 
     /**
      * Simulate a slow response.

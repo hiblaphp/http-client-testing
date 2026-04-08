@@ -107,7 +107,7 @@ describe('SSEResponseFactory', function () {
 
             $mock->setSSEEvents([['data' => 'test']]);
             $mock->setStatusCode(200);
-            $mock->setDelay(0.1);
+            $mock->setLatency(0.1);
 
             $startTime = microtime(true);
             $promise = $factory->create($mock, null, null);

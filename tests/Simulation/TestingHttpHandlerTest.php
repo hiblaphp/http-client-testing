@@ -77,7 +77,7 @@ describe('Delay Simulation Tests', function () {
 
         $handler->mock('GET')
             ->url('https://api.example.com/slow')
-            ->delay(0.5)
+            ->latency(0.5)
             ->respondJson(['data' => 'slow response'])
             ->register()
         ;
@@ -100,7 +100,7 @@ describe('Delay Simulation Tests', function () {
 
         $handler->mock('GET')
             ->url('https://api.example.com/random-slow')
-            ->randomDelay(0.2, 0.4)
+            ->randomLatency(0.2, 0.4)
             ->respondJson(['data' => 'random delay response'])
             ->register()
         ;
@@ -120,7 +120,7 @@ describe('Delay Simulation Tests', function () {
 
     test('global random delay affects all requests', function () {
         $handler = testingHttpHandler();
-        $handler->withGlobalRandomDelay(0.1, 0.2);
+        $handler->withGlobalRandomLatencey(0.1, 0.2);
 
         $handler->mock('GET')
             ->url('https://api.example.com/test')

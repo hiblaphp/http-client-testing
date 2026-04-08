@@ -35,7 +35,7 @@ describe('Advanced Asynchronous Features', function () {
     });
 
     it('can be timed out before it completes', function () {
-        Http::mock()->url('/cancellable')->delay(2)->respondWith('Too late')->register();
+        Http::mock()->url('/cancellable')->latency(2)->respondWith('Too late')->register();
 
         $promise = Http::get('/cancellable');
 

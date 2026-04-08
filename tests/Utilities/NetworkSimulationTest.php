@@ -348,10 +348,10 @@ describe('NetworkSimulator', function () {
     });
 
     describe('Random Delay Methods', function () {
-        it('setRandomDelay configures random delay range', function () {
+        it('setrandomLatency configures random delay range', function () {
             $simulator = new NetworkSimulator();
             $simulator->enable();
-            $simulator->setRandomDelay([2.0, 8.0]);
+            $simulator->setrandomLatency([2.0, 8.0]);
             $result = $simulator->simulate();
 
             expect($result['delay'])->toBeGreaterThanOrEqual(2.0)
@@ -359,10 +359,10 @@ describe('NetworkSimulator', function () {
             ;
         });
 
-        it('setRandomDelay overrides default_delay', function () {
+        it('setrandomLatency overrides default_delay', function () {
             $simulator = new NetworkSimulator();
             $simulator->enable(['default_delay' => 1.0]);
-            $simulator->setRandomDelay([5.0, 10.0]);
+            $simulator->setrandomLatency([5.0, 10.0]);
             $result = $simulator->simulate();
 
             expect($result['delay'])->not->toBe(1.0)

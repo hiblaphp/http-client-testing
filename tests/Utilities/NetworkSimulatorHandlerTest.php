@@ -85,22 +85,22 @@ describe('NetworkSimulationHandler', function () {
         });
     });
 
-    describe('generateGlobalRandomDelay', function () {
+    describe('generateGlobalrandomLatency', function () {
         it('returns 0 when handler is null', function () {
             $simulator = Mockery::mock(NetworkSimulator::class);
             $handler = new NetworkSimulationHandler($simulator, null);
 
-            expect($handler->generateGlobalRandomDelay())->toBe(0.0);
+            expect($handler->generateGlobalrandomLatency())->toBe(0.0);
         });
 
         it('returns delay from testing handler', function () {
             $simulator = Mockery::mock(NetworkSimulator::class);
             $testingHandler = Mockery::mock(TestingHttpHandler::class);
-            $testingHandler->shouldReceive('generateGlobalRandomDelay')->andReturn(2.5);
+            $testingHandler->shouldReceive('generateGlobalrandomLatency')->andReturn(2.5);
 
             $handler = new NetworkSimulationHandler($simulator, $testingHandler);
 
-            expect($handler->generateGlobalRandomDelay())->toBe(2.5);
+            expect($handler->generateGlobalrandomLatency())->toBe(2.5);
         });
     });
 

@@ -100,7 +100,7 @@ describe('MockedRequest', function () {
 
     test('can set fixed delay', function () {
         $request = new MockedRequest();
-        $request->setDelay(2.5);
+        $request->setLatency(2.5);
 
         expect($request->getDelay())->toBe(2.5);
     });
@@ -141,16 +141,16 @@ describe('MockedRequest', function () {
 
     test('can set random delay range', function () {
         $request = new MockedRequest();
-        $request->setRandomDelayRange(1.0, 3.0);
+        $request->setrandomLatencyRange(1.0, 3.0);
 
-        expect($request->getRandomDelayRange())->toBe([1.0, 3.0]);
+        expect($request->getrandomLatencyRange())->toBe([1.0, 3.0]);
     });
 
     test('generates random delay within range', function () {
         $request = new MockedRequest();
-        $request->setRandomDelayRange(1.0, 3.0);
+        $request->setrandomLatencyRange(1.0, 3.0);
 
-        $delay = $request->generateRandomDelay();
+        $delay = $request->generaterandomLatency();
 
         expect($delay)->toBeGreaterThanOrEqual(1.0)
             ->and($delay)->toBeLessThanOrEqual(3.0)
@@ -314,7 +314,7 @@ describe('MockedRequest', function () {
             $request->setUrlPattern('https://api.example.com/*');
             $request->setStatusCode(201);
             $request->setBody('Success');
-            $request->setDelay(1.5);
+            $request->setLatency(1.5);
             $request->setPersistent(true);
 
             $array = $request->toArray();
@@ -379,8 +379,8 @@ describe('MockedRequest', function () {
             $original->setStatusCode(204);
             $original->setBody('Deleted');
             $original->addResponseHeader('X-Custom', 'value');
-            $original->setDelay(1.0);
-            $original->setRandomDelayRange(0.5, 2.0);
+            $original->setLatency(1.0);
+            $original->setrandomLatencyRange(0.5, 2.0);
             $original->setPersistent(true);
             $original->asSSE();
 
@@ -393,7 +393,7 @@ describe('MockedRequest', function () {
 
     test('timeout takes precedence in getDelay', function () {
         $request = new MockedRequest();
-        $request->setDelay(1.0);
+        $request->setLatency(1.0);
         $request->setTimeout(3.0);
 
         expect($request->getDelay())->toBe(3.0);
@@ -401,8 +401,8 @@ describe('MockedRequest', function () {
 
     test('random delay takes precedence over fixed delay in getDelay', function () {
         $request = new MockedRequest();
-        $request->setDelay(1.0);
-        $request->setRandomDelayRange(2.0, 4.0);
+        $request->setLatency(1.0);
+        $request->setrandomLatencyRange(2.0, 4.0);
 
         $delay = $request->getDelay();
 

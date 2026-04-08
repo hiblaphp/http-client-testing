@@ -43,12 +43,12 @@ class MockedRequest
     /**
      * Minimum random delay in seconds.
      */
-    private ?float $randomDelayMin = null;
+    private ?float $randomLatencyMin = null;
 
     /**
      * Maximum random delay in seconds.
      */
-    private ?float $randomDelayMax = null;
+    private ?float $randomLatencyMax = null;
 
     /**
      * HTTP status code to return.
@@ -77,7 +77,7 @@ class MockedRequest
     /**
      * Fixed delay in seconds before responding.
      */
-    private float $delay = 0;
+    private float $latency = 0;
 
     /**
      * Error message if this mock should fail.
@@ -296,9 +296,9 @@ class MockedRequest
      *
      * @param float $seconds Delay in seconds
      */
-    public function setDelay(float $seconds): void
+    public function setLatency(float $seconds): void
     {
-        $this->delay = $seconds;
+        $this->latency = $seconds;
     }
 
     /**
@@ -486,10 +486,10 @@ class MockedRequest
      * @param float $min Minimum delay in seconds
      * @param float $max Maximum delay in seconds
      */
-    public function setRandomDelayRange(float $min, float $max): void
+    public function setrandomLatencyRange(float $min, float $max): void
     {
-        $this->randomDelayMin = $min;
-        $this->randomDelayMax = $max;
+        $this->randomLatencyMin = $min;
+        $this->randomLatencyMax = $max;
     }
 
     /**
@@ -497,13 +497,13 @@ class MockedRequest
      *
      * @return array{0: float, 1: float}|null Delay range or null
      */
-    public function getRandomDelayRange(): ?array
+    public function getrandomLatencyRange(): ?array
     {
-        if ($this->randomDelayMin === null || $this->randomDelayMax === null) {
+        if ($this->randomLatencyMin === null || $this->randomLatencyMax === null) {
             return null;
         }
 
-        return [$this->randomDelayMin, $this->randomDelayMax];
+        return [$this->randomLatencyMin, $this->randomLatencyMax];
     }
 
     /**
@@ -511,16 +511,16 @@ class MockedRequest
      *
      * @return float Random delay in seconds
      */
-    public function generateRandomDelay(): float
+    public function generaterandomLatency(): float
     {
-        if ($this->randomDelayMin === null || $this->randomDelayMax === null) {
-            return $this->delay;
+        if ($this->randomLatencyMin === null || $this->randomLatencyMax === null) {
+            return $this->latency;
         }
 
         $precision = 1000000;
         $randomInt = random_int(
-            (int) ($this->randomDelayMin * $precision),
-            (int) ($this->randomDelayMax * $precision)
+            (int) ($this->randomLatencyMin * $precision),
+            (int) ($this->randomLatencyMax * $precision)
         );
 
         return $randomInt / $precision;
@@ -533,11 +533,11 @@ class MockedRequest
      */
     public function getDelay(): float
     {
-        if ($this->randomDelayMin !== null && $this->randomDelayMax !== null) {
-            return $this->generateRandomDelay();
+        if ($this->randomLatencyMin !== null && $this->randomLatencyMax !== null) {
+            return $this->generaterandomLatency();
         }
 
-        return $this->timeoutAfter ?? $this->delay;
+        return $this->timeoutAfter ?? $this->latency;
     }
 
     /**
@@ -692,9 +692,9 @@ class MockedRequest
             'statusCode' => $this->statusCode,
             'body' => $this->body,
             'headers' => $this->headers,
-            'delay' => $this->delay,
-            'randomDelayMin' => $this->randomDelayMin,
-            'randomDelayMax' => $this->randomDelayMax,
+            'delay' => $this->latency,
+            'randomLatencyMin' => $this->randomLatencyMin,
+            'randomLatencyMax' => $this->randomLatencyMax,
             'error' => $this->error,
             'persistent' => $this->persistent,
             'timeoutAfter' => $this->timeoutAfter,
@@ -777,13 +777,13 @@ class MockedRequest
         }
 
         $delay = $data['delay'] ?? 0;
-        $request->delay = is_float($delay) || is_int($delay) ? (float)$delay : 0.0;
+        $request->latency = is_float($delay) || is_int($delay) ? (float)$delay : 0.0;
 
-        $randomDelayMin = $data['randomDelayMin'] ?? null;
-        $request->randomDelayMin = is_float($randomDelayMin) || is_int($randomDelayMin) ? (float)$randomDelayMin : null;
+        $randomLatencyMin = $data['randomLatencyMin'] ?? null;
+        $request->randomLatencyMin = is_float($randomLatencyMin) || is_int($randomLatencyMin) ? (float)$randomLatencyMin : null;
 
-        $randomDelayMax = $data['randomDelayMax'] ?? null;
-        $request->randomDelayMax = is_float($randomDelayMax) || is_int($randomDelayMax) ? (float)$randomDelayMax : null;
+        $randomLatencyMax = $data['randomLatencyMax'] ?? null;
+        $request->randomLatencyMax = is_float($randomLatencyMax) || is_int($randomLatencyMax) ? (float)$randomLatencyMax : null;
 
         $error = $data['error'] ?? null;
         $request->error = is_string($error) ? $error : null;

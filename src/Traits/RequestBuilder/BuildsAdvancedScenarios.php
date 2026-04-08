@@ -38,7 +38,7 @@ trait BuildsAdvancedScenarios
                 if ($body !== false) {
                     $mock->setBody($body);
                 }
-                $mock->setDelay($delay);
+                $mock->setLatency($delay);
                 $mock->addResponseHeader('Content-Type', 'application/json');
             }
 

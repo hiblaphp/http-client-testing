@@ -75,12 +75,12 @@ class TestingHttpHandler extends HttpHandler implements
     /**
      * Minimum seconds for global random delay.
      */
-    private ?float $globalRandomDelayMin = null;
+    private ?float $globalrandomLatencyMin = null;
 
     /**
      * Maximum seconds for global random delay.
      */
-    private ?float $globalRandomDelayMax = null;
+    private ?float $globalrandomLatencyMax = null;
 
     /**
      * Global testing configuration settings.
@@ -216,14 +216,14 @@ class TestingHttpHandler extends HttpHandler implements
     /**
      * Add a random delay to all requests.
      */
-    public function withGlobalRandomDelay(float $minSeconds, float $maxSeconds): self
+    public function withGlobalRandomLatencey(float $minSeconds, float $maxSeconds): self
     {
         if ($minSeconds > $maxSeconds) {
             throw new \InvalidArgumentException('Minimum delay cannot be greater than maximum delay');
         }
 
-        $this->globalRandomDelayMin = $minSeconds;
-        $this->globalRandomDelayMax = $maxSeconds;
+        $this->globalrandomLatencyMin = $minSeconds;
+        $this->globalrandomLatencyMax = $maxSeconds;
 
         return $this;
     }
@@ -231,10 +231,10 @@ class TestingHttpHandler extends HttpHandler implements
     /**
      * Remove global random delay from requests.
      */
-    public function withoutGlobalRandomDelay(): self
+    public function withoutGlobalrandomLatency(): self
     {
-        $this->globalRandomDelayMin = null;
-        $this->globalRandomDelayMax = null;
+        $this->globalrandomLatencyMin = null;
+        $this->globalrandomLatencyMax = null;
 
         return $this;
     }
@@ -245,7 +245,7 @@ class TestingHttpHandler extends HttpHandler implements
      * @param array<float> $delayRange
      * @param array<string, mixed> $additionalSettings
      */
-    public function withNetworkRandomDelay(array $delayRange, array $additionalSettings = []): self
+    public function withNetworkrandomLatency(array $delayRange, array $additionalSettings = []): self
     {
         /** @var array{failure_rate?: float, timeout_rate?: float, connection_failure_rate?: float, default_delay?: array<float>|float, timeout_delay?: array<float>|float, retryable_failure_rate?: float, random_delay?: array<float>|null} */
         $settings = array_merge($additionalSettings, ['random_delay' => $delayRange]);
@@ -574,16 +574,16 @@ class TestingHttpHandler extends HttpHandler implements
     /**
      * Generate a random delay value within the configured range.
      */
-    public function generateGlobalRandomDelay(): float
+    public function generateGlobalrandomLatency(): float
     {
-        if ($this->globalRandomDelayMin === null || $this->globalRandomDelayMax === null) {
+        if ($this->globalrandomLatencyMin === null || $this->globalrandomLatencyMax === null) {
             return 0.0;
         }
 
         $precision = 1000000;
         $randomInt = random_int(
-            (int) ($this->globalRandomDelayMin * $precision),
-            (int) ($this->globalRandomDelayMax * $precision)
+            (int) ($this->globalrandomLatencyMin * $precision),
+            (int) ($this->globalrandomLatencyMax * $precision)
         );
 
         return $randomInt / $precision;
@@ -595,8 +595,8 @@ class TestingHttpHandler extends HttpHandler implements
     public function reset(): void
     {
         $this->mockedRequests = [];
-        $this->globalRandomDelayMin = null;
-        $this->globalRandomDelayMax = null;
+        $this->globalrandomLatencyMin = null;
+        $this->globalrandomLatencyMax = null;
         $this->fileManager->cleanup();
         $this->cookieManager->cleanup();
         $this->requestRecorder->reset();

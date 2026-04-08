@@ -7,7 +7,7 @@ use Hibla\HttpClient\Http;
 use Hibla\Promise\Promise;
 
 beforeEach(function () {
-    Http::startTesting()->withGlobalRandomDelay(0.1, 0.3);
+    Http::startTesting()->withGlobalRandomLatencey(0.1, 0.3);
 });
 
 afterEach(function () {
@@ -276,7 +276,7 @@ describe('Promise::race() with Mocks using Http Facade', function () {
         Http::mock('GET')
             ->url('https://jsonplaceholder.typicode.com/posts/1')
             ->respondJson(['id' => 1, 'title' => 'Post 1'])
-            ->delay(0.3)
+            ->latency(0.3)
             ->persistent()
             ->register()
         ;
@@ -284,7 +284,7 @@ describe('Promise::race() with Mocks using Http Facade', function () {
         Http::mock('GET')
             ->url('https://jsonplaceholder.typicode.com/posts/2')
             ->respondJson(['id' => 2, 'title' => 'Post 2'])
-            ->delay(0.1) // Fastest
+            ->latency(0.1) // Fastest
             ->persistent()
             ->register()
         ;
@@ -292,7 +292,7 @@ describe('Promise::race() with Mocks using Http Facade', function () {
         Http::mock('GET')
             ->url('https://jsonplaceholder.typicode.com/posts/3')
             ->respondJson(['id' => 3, 'title' => 'Post 3'])
-            ->delay(0.5)
+            ->latency(0.5)
             ->persistent()
             ->register()
         ;
@@ -314,7 +314,7 @@ describe('Promise::race() with Mocks using Http Facade', function () {
     test('race with delayed requests', function () {
         Http::mock('GET')
             ->url('https://api.example.com/slow')
-            ->delay(2.0)
+            ->latency(2.0)
             ->respondJson(['speed' => 'slow'])
             ->persistent()
             ->register()
@@ -322,7 +322,7 @@ describe('Promise::race() with Mocks using Http Facade', function () {
 
         Http::mock('GET')
             ->url('https://api.example.com/fast')
-            ->delay(0.1)
+            ->latency(0.1)
             ->respondJson(['speed' => 'fast'])
             ->persistent()
             ->register()
@@ -330,7 +330,7 @@ describe('Promise::race() with Mocks using Http Facade', function () {
 
         Http::mock('GET')
             ->url('https://api.example.com/medium')
-            ->delay(1.0)
+            ->latency(1.0)
             ->respondJson(['speed' => 'medium'])
             ->persistent()
             ->register()
@@ -613,7 +613,7 @@ describe('Promise::batch() with Mocks using Http Facade', function () {
 describe('Promise::concurrentSettled() with Mocks using Http Facade', function () {
 
     beforeEach(function () {
-        Http::startTesting()->withGlobalRandomDelay(0.1, 0.3);
+        Http::startTesting()->withGlobalRandomLatencey(0.1, 0.3);
     });
 
     afterEach(function () {
@@ -707,7 +707,7 @@ describe('Promise::concurrentSettled() with Mocks using Http Facade', function (
 describe('Promise::batchSettled() with Mocks using Http Facade', function () {
 
     beforeEach(function () {
-        Http::startTesting()->withGlobalRandomDelay(0.1, 0.3);
+        Http::startTesting()->withGlobalRandomLatencey(0.1, 0.3);
     });
 
     afterEach(function () {
@@ -784,7 +784,7 @@ describe('Promise::batchSettled() with Mocks using Http Facade', function () {
 describe('Concurrent Requests with Mocks using Http Facade', function () {
 
     beforeEach(function () {
-        Http::startTesting()->enablePassthrough()->withGlobalRandomDelay(0.1, 0.3);
+        Http::startTesting()->enablePassthrough()->withGlobalRandomLatencey(0.1, 0.3);
     });
 
     afterEach(function () {
@@ -893,7 +893,7 @@ describe('Concurrent Requests with Mocks using Http Facade', function () {
 
         Http::mock('GET')
             ->url('https://api.example.com/slow')
-            ->delay(0.5)
+            ->latency(0.5)
             ->respondJson(['status' => 'slow'])
             ->register()
         ;
@@ -925,7 +925,7 @@ describe('Concurrent Requests with Mocks using Http Facade', function () {
 describe('Concurrency Performance Tests with Mocks using Http Facade', function () {
 
     beforeEach(function () {
-        Http::startTesting()->withGlobalRandomDelay(0.1, 0.3);
+        Http::startTesting()->withGlobalRandomLatencey(0.1, 0.3);
     });
 
     afterEach(function () {
@@ -1095,21 +1095,21 @@ describe('Complex Concurrent Workflows with Mocks using Http Facade', function (
         Http::mock('GET')
             ->url('https://jsonplaceholder.typicode.com/posts/1')
             ->respondJson(['id' => 1, 'title' => 'Post 1'])
-            ->delay(0.3)
+            ->latency(0.3)
             ->register()
         ;
 
         Http::mock('GET')
             ->url('https://jsonplaceholder.typicode.com/users/1')
             ->respondJson(['id' => 1, 'name' => 'User 1'])
-            ->delay(0.1) // Fastest
+            ->latency(0.1) // Fastest
             ->register()
         ;
 
         Http::mock('GET')
             ->url('https://jsonplaceholder.typicode.com/comments/1')
             ->respondJson(['id' => 1, 'body' => 'Comment 1'])
-            ->delay(0.5)
+            ->latency(0.5)
             ->register()
         ;
 
@@ -1212,7 +1212,7 @@ describe('Error Handling with Concurrent Requests', function () {
         Http::mock('GET')
             ->url('https://api.example.com/fast')
             ->respondJson(['speed' => 'fast'])
-            ->delay(0.1)
+            ->latency(0.1)
             ->register()
         ;
 
@@ -1225,7 +1225,7 @@ describe('Error Handling with Concurrent Requests', function () {
         Http::mock('GET')
             ->url('https://api.example.com/normal')
             ->respondJson(['speed' => 'normal'])
-            ->delay(0.2)
+            ->latency(0.2)
             ->register()
         ;
 
@@ -1247,7 +1247,7 @@ describe('Error Handling with Concurrent Requests', function () {
 describe('Advanced Promise Patterns with Mocks', function () {
 
     beforeEach(function () {
-        Http::startTesting()->withGlobalRandomDelay(0.1, 0.3);
+        Http::startTesting()->withGlobalRandomLatencey(0.1, 0.3);
     });
 
     afterEach(function () {
@@ -1297,21 +1297,21 @@ describe('Advanced Promise Patterns with Mocks', function () {
         Http::mock('GET')
             ->url('https://server1.example.com/data')
             ->respondJson(['server' => 'server1', 'data' => 'result'])
-            ->randomDelay(0.2, 0.4)
+            ->randomLatency(0.2, 0.4)
             ->register()
         ;
 
         Http::mock('GET')
             ->url('https://server2.example.com/data')
             ->respondJson(['server' => 'server2', 'data' => 'result'])
-            ->randomDelay(0.1, 0.3)
+            ->randomLatency(0.1, 0.3)
             ->register()
         ;
 
         Http::mock('GET')
             ->url('https://server3.example.com/data')
             ->respondJson(['server' => 'server3', 'data' => 'result'])
-            ->randomDelay(0.15, 0.35)
+            ->randomLatency(0.15, 0.35)
             ->register()
         ;
 

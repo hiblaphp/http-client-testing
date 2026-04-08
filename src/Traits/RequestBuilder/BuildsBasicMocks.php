@@ -95,40 +95,40 @@ trait BuildsBasicMocks
     }
 
     /**
-     * Add a delay before responding.
+     * Add a latency before responding.
      */
-    public function delay(float $seconds): static
+    public function latency(float $seconds): static
     {
-        $this->getRequest()->setDelay($seconds);
+        $this->getRequest()->setLatency($seconds);
 
         return $this;
     }
 
     /**
-     * Set a random delay range for realistic network simulation.
+     * Set a random latency range for realistic network simulation.
      */
-    public function randomDelay(float $minSeconds, float $maxSeconds): static
+    public function randomLatency(float $minSeconds, float $maxSeconds): static
     {
         if ($minSeconds > $maxSeconds) {
             throw new \InvalidArgumentException('Minimum delay cannot be greater than maximum delay');
         }
 
-        $randomDelay = $this->generateAggressiveRandomFloat($minSeconds, $maxSeconds);
-        $this->getRequest()->setDelay($randomDelay);
+        $randomLatency = $this->generateAggressiveRandomFloat($minSeconds, $maxSeconds);
+        $this->getRequest()->setLatency($randomLatency);
 
         return $this;
     }
 
     /**
-     * Create a persistent mock with random delays for each request.
+     * Create a persistent mock with random latencies for each request.
      */
-    public function randomPersistentDelay(float $minSeconds, float $maxSeconds): static
+    public function randomPersistentLatency(float $minSeconds, float $maxSeconds): static
     {
         if ($minSeconds > $maxSeconds) {
             throw new \InvalidArgumentException('Minimum delay cannot be greater than maximum delay');
         }
 
-        $this->getRequest()->setRandomDelayRange($minSeconds, $maxSeconds);
+        $this->getRequest()->setrandomLatencyRange($minSeconds, $maxSeconds);
         $this->persistent();
 
         return $this;
@@ -139,7 +139,7 @@ trait BuildsBasicMocks
      */
     public function slowResponse(float $delaySeconds): static
     {
-        $this->getRequest()->setDelay($delaySeconds);
+        $this->getRequest()->setLatency($delaySeconds);
 
         return $this;
     }

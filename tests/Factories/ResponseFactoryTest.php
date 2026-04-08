@@ -1132,7 +1132,7 @@ describe('NetworkSimulator', function () {
 
     test('applies random delay range', function () {
         $simulator = new NetworkSimulator();
-        $simulator->setRandomDelay([0.1, 0.3]);
+        $simulator->setrandomLatency([0.1, 0.3]);
         $simulator->enable();
 
         $result = $simulator->simulate();
@@ -1201,11 +1201,11 @@ describe('NetworkSimulationHandler', function () {
         ;
     });
 
-    test('generateGlobalRandomDelay returns zero without handler', function () {
+    test('generateGlobalrandomLatency returns zero without handler', function () {
         $networkSimulator = new NetworkSimulator();
         $handler = new NetworkSimulationHandler($networkSimulator, null);
 
-        expect($handler->generateGlobalRandomDelay())->toBe(0.0);
+        expect($handler->generateGlobalrandomLatency())->toBe(0.0);
     });
 
     test('preserves error message for network failure', function () {

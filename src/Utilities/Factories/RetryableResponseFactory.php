@@ -75,7 +75,7 @@ class RetryableResponseFactory
             }
 
             $networkConditions = $this->networkHandler->simulate();
-            $globalDelay = $this->networkHandler->generateGlobalRandomDelay();
+            $globalDelay = $this->networkHandler->generateGlobalrandomLatency();
             $delay = $this->delayCalculator->calculateTotalDelay(
                 $mock,
                 $networkConditions,

@@ -61,7 +61,7 @@ class StandardResponseFactory
         callable $callback
     ): void {
         $networkConditions = $this->networkHandler->simulate();
-        $globalDelay = $this->networkHandler->generateGlobalRandomDelay();
+        $globalDelay = $this->networkHandler->generateGlobalrandomLatency();
         $totalDelay = $this->delayCalculator->calculateTotalDelay(
             $mock,
             $networkConditions,

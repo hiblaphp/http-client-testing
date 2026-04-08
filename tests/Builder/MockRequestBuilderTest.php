@@ -43,26 +43,26 @@ test('sets json response', function () {
 
 test('sets delay', function () {
     $builder = createBuilder();
-    $builder->delay(2.5);
+    $builder->latency(2.5);
 
     expect($builder)->toBeInstanceOf(MockRequestBuilder::class);
 });
 
 test('sets random delay', function () {
     $builder = createBuilder();
-    $builder->randomDelay(1.0, 3.0);
+    $builder->randomLatency(1.0, 3.0);
 
     expect($builder)->toBeInstanceOf(MockRequestBuilder::class);
 });
 
 test('throws exception for invalid random delay range', function () {
     $builder = createBuilder();
-    $builder->randomDelay(5.0, 2.0);
+    $builder->randomLatency(5.0, 2.0);
 })->throws(InvalidArgumentException::class, 'Minimum delay cannot be greater than maximum delay');
 
 test('sets persistent with random delay', function () {
     $builder = createBuilder();
-    $builder->randomPersistentDelay(0.5, 2.0);
+    $builder->randomPersistentLatency(0.5, 2.0);
 
     expect($builder)->toBeInstanceOf(MockRequestBuilder::class);
 });
@@ -555,7 +555,7 @@ test('chains multiple methods fluently', function () {
         ->respondWithStatus(201)
         ->respondJson(['id' => 1, 'created' => true])
         ->respondWithHeader('Location', '/data/1')
-        ->delay(0.5)
+        ->latency(0.5)
         ->persistent()
     ;
 

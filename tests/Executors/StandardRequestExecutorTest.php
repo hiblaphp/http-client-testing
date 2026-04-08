@@ -194,7 +194,7 @@ test('executes request with delay', function () {
 
     $mock = new MockedRequest('GET');
     $mock->setUrlPattern('https://api.example.com/slow');
-    $mock->setDelay(0.1);
+    $mock->setLatency(0.1);
     $mock->setBody('{"delayed": true}');
     $mocks[] = $mock;
 

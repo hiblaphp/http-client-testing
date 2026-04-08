@@ -76,7 +76,7 @@ trait BuildsRetrySequences
                     $mock->setError($error . " (attempt {$attemptNumber})");
                 }
                 $mock->setRetryable($retryable);
-                $mock->setDelay($delay);
+                $mock->setLatency($delay);
             }
             $this->getHandler()->addMockedRequest($mock);
         }
