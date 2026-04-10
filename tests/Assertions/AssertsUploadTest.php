@@ -18,7 +18,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->upload('https://example.com/upload', $source)
             ->wait()
         ;
@@ -35,7 +35,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->upload('https://example.com/upload', $source)
             ->wait()
         ;
@@ -52,7 +52,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->upload('https://example.com/upload', $source)
             ->wait()
         ;
@@ -69,7 +69,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->upload('https://example.com/upload', $source)
             ->wait()
         ;
@@ -84,7 +84,7 @@ describe('AssertsUploads', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
         ;
@@ -101,7 +101,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->upload('https://example.com/upload', $source)
             ->wait()
         ;
@@ -119,7 +119,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload1')->respondWithStatus(200)->register();
         $handler->mock('PUT')->url('https://example.com/upload2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->upload('https://example.com/upload1', $source1)->wait();
         $client->upload('https://example.com/upload2', $source2)->wait();
 
@@ -140,7 +140,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload1')->respondWithStatus(200)->register();
         $handler->mock('POST')->url('https://example.com/upload2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->upload('https://example.com/upload1', $source1)->wait();
         $client->withMethod('POST')->upload('https://example.com/upload2', $source2)->wait();
 
@@ -165,7 +165,7 @@ describe('AssertsUploads', function () {
         $handler->mock('PUT')->url('https://example.com/upload1')->respondWithStatus(200)->register();
         $handler->mock('PUT')->url('https://example.com/upload2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->upload('https://example.com/upload1', $source1)->wait();
 
         $handler->mock('GET')->url('https://example.com/api')->respondWithStatus(200)->register();
@@ -184,7 +184,7 @@ describe('AssertsUploads', function () {
         $handler = testingHttpHandler();
 
         $handler->mock('GET')->url('https://example.com/api')->respondWithStatus(200)->register();
-        (new HttpClient())->setHandler($handler)->get('https://example.com/api')->wait();
+        (new HttpClient())->withHandler($handler)->get('https://example.com/api')->wait();
 
         $lastUpload = $handler->getLastUpload();
 

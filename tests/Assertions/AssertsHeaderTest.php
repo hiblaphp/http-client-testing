@@ -11,7 +11,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('X-Custom', 'value')
             ->get('https://example.com')
             ->wait()
@@ -27,7 +27,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('X-Custom', 'expected-value')
             ->get('https://example.com')
             ->wait()
@@ -43,7 +43,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('X-Custom', 'actual-value')
             ->get('https://example.com')
             ->wait()
@@ -59,7 +59,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
         ;
@@ -74,7 +74,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('X-Custom', 'value')
             ->get('https://example.com')
             ->wait()
@@ -90,7 +90,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeaders([
                 'X-Custom-1' => 'value1',
                 'X-Custom-2' => 'value2',
@@ -110,7 +110,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('X-Request-Id', 'req-12345')
             ->get('https://example.com')
             ->wait()
@@ -126,7 +126,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withToken('secret-token') // Built-in method to set "Authorization: Bearer ..."
             ->get('https://example.com')
             ->wait()
@@ -142,7 +142,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->contentType('application/json')
             ->post('https://example.com')
             ->wait()
@@ -158,7 +158,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->accept('application/json')
             ->get('https://example.com')
             ->wait()
@@ -174,7 +174,7 @@ describe('AssertsHeaders', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withUserAgent('CustomAgent/1.0')
             ->get('https://example.com')
             ->wait()

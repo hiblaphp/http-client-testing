@@ -11,7 +11,7 @@ describe('Edge Cases', function () {
         $handler->mock('GET')->url('https://example.com/api/users/123')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com/api/users/123')
             ->wait()
         ;
@@ -26,7 +26,7 @@ describe('Edge Cases', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->send('post', 'https://example.com')
             ->wait()
         ;
@@ -49,7 +49,7 @@ describe('Edge Cases', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->get('https://example.com')->wait();
         $client->get('https://example.com')->wait();
         $client->get('https://example.com')->wait();
@@ -64,7 +64,7 @@ describe('Edge Cases', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withJson([
                 'user' => [
                     'profile' => [
@@ -87,7 +87,7 @@ describe('Edge Cases', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('Accept', ['application/json', 'text/html'])
             ->get('https://example.com')
             ->wait()
@@ -110,7 +110,7 @@ describe('Edge Cases', function () {
         $tempFile = $handler->createTempFile('test_download.txt');
 
         $result = (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->download('https://example.com/file.txt', $tempFile)
             ->wait()
         ;
@@ -127,7 +127,7 @@ describe('Edge Cases', function () {
 
         $chunks = [];
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->stream('https://example.com/stream', function ($chunk) use (&$chunks) {
                 $chunks[] = $chunk;
             })
@@ -150,7 +150,7 @@ describe('Edge Cases', function () {
 
         // HttpClient::sse() returns an SSEBuilderInterface which requires calling connect()
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->sse('https://example.com/events/stream-123')
             ->connect()
             ->wait()
@@ -168,7 +168,7 @@ describe('Debugging Helpers', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withHeader('X-Custom', 'header-value')
             ->withJson(['key' => 'value'])
             ->post('https://example.com')
@@ -194,7 +194,7 @@ describe('Debugging Helpers', function () {
         $tempFile = $handler->createTempFile('dump_test.txt');
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->download('https://example.com/file.txt', $tempFile)
             ->wait()
         ;
@@ -214,7 +214,7 @@ describe('Debugging Helpers', function () {
         $handler->mock('GET')->url('https://example.com/stream')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->stream('https://example.com/stream')
             ->wait()
         ;
@@ -234,7 +234,7 @@ describe('Debugging Helpers', function () {
         $handler->mock('GET')->url('https://example.com/1')->respondWithStatus(200)->register();
         $handler->mock('POST')->url('https://example.com/2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->get('https://example.com/1')->wait();
         $client->post('https://example.com/2')->wait();
 

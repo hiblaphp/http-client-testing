@@ -12,7 +12,7 @@ describe('AssertsStreams', function () {
         $handler->mock('GET')->url('https://example.com/stream')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->stream('https://example.com/stream')
             ->wait()
         ;
@@ -27,7 +27,7 @@ describe('AssertsStreams', function () {
         $handler->mock('GET')->url('https://example.com/stream')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->stream('https://example.com/stream', fn () => null)
             ->wait()
         ;
@@ -42,7 +42,7 @@ describe('AssertsStreams', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
         ;
@@ -57,7 +57,7 @@ describe('AssertsStreams', function () {
         $handler->mock('GET')->url('https://example.com/stream1')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/stream2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->stream('https://example.com/stream1')->wait();
         $client->stream('https://example.com/stream2')->wait();
 
@@ -71,7 +71,7 @@ describe('AssertsStreams', function () {
         $handler->mock('GET')->url('https://example.com/stream')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->stream('https://example.com/stream')
             ->wait()
         ;
@@ -88,7 +88,7 @@ describe('AssertsStreams', function () {
         $handler->mock('GET')->url('https://example.com/stream1')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/stream2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
         $client->stream('https://example.com/stream1')->wait();
         $client->stream('https://example.com/stream2')->wait();
 

@@ -11,7 +11,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->body('test body content')
             ->send('POST', 'https://example.com')
             ->wait()
@@ -27,7 +27,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->body('this is test body content')
             ->send('POST', 'https://example.com')
             ->wait()
@@ -43,7 +43,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withJson(['name' => 'John', 'age' => 30]) // Automatically sets body and Content-Type header
             ->post('https://example.com')
             ->wait()
@@ -60,7 +60,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withJson(['name' => 'John', 'age' => 30, 'city' => 'NYC'])
             ->post('https://example.com')
             ->wait()
@@ -76,7 +76,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withJson(['user' => ['name' => 'John', 'age' => 30]])
             ->post('https://example.com')
             ->wait()
@@ -92,7 +92,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
         ;
@@ -107,7 +107,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->body('test body content')
             ->post('https://example.com')
             ->wait()
@@ -123,7 +123,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->withJson(['key' => 'value'])
             ->post('https://example.com')
             ->wait()
@@ -139,7 +139,7 @@ describe('AssertsRequestBody', function () {
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->body('request-id-12345')
             ->post('https://example.com')
             ->wait()

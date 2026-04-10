@@ -21,7 +21,7 @@ describe('AssertsRequests', function () {
         ;
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com/api')
             ->wait()
         ;
@@ -53,7 +53,7 @@ describe('AssertsRequests', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
         ;
@@ -69,7 +69,7 @@ describe('AssertsRequests', function () {
         $handler->mock('GET')->url('https://example.com/1')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
 
         $client->get('https://example.com/1')->wait();
         $client->get('https://example.com/2')->wait();
@@ -85,7 +85,7 @@ describe('AssertsRequests', function () {
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
         (new HttpClient())
-            ->setHandler($handler)
+            ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
         ;
@@ -101,7 +101,7 @@ describe('AssertsRequests', function () {
         $handler->mock('GET')->url('https://example.com/1')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
 
         $client->get('https://example.com/1')->wait();
         $client->get('https://example.com/2')->wait();
@@ -119,7 +119,7 @@ describe('AssertsRequests', function () {
         $handler->mock('GET')->url('https://example.com/1')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->setHandler($handler);
+        $client = (new HttpClient())->withHandler($handler);
 
         $client->get('https://example.com/1')->wait();
         $client->get('https://example.com/2')->wait();
