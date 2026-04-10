@@ -27,7 +27,7 @@ describe('Mixed Multipart Payload Edge Cases', function () {
 
         $stream = Stream::fromString('stream content');
 
-        Http::request()
+        Http::client()
             ->withMultipart([
                 'raw_text' => 'plain string',
                 'json_data' => ['nested' => true],
@@ -53,7 +53,7 @@ describe('Mixed Multipart Payload Edge Cases', function () {
         Http::mock('POST')->url('/empty-parts')->respondWithStatus(200)->register();
         $emptyFile = Http::getTestingHandler()->createTempFile('empty.bin', '');
 
-        Http::request()
+        Http::client()
             ->withFile('empty_file', $emptyFile)
             ->withMultipart(['empty_string' => ''])
             ->post('/empty-parts')
@@ -67,13 +67,13 @@ describe('Mixed Multipart Payload Edge Cases', function () {
     });
 
     test('it throws an exception when attaching a non-existent file', function () {
-        expect(fn () => Http::request()->withFile('bad', '/does/not/exist/file.txt'))
+        expect(fn () => Http::client()->withFile('bad', '/does/not/exist/file.txt'))
             ->toThrow(InvalidArgumentException::class, 'File must be a file path, UploadedFileInterface, StreamInterface, or resource.')
         ;
     });
 
     test('it throws an exception when attaching an invalid variable type as file', function () {
-        expect(fn () => Http::request()->withFile('invalid', 12345))
+        expect(fn () => Http::client()->withFile('invalid', 12345))
             ->toThrow(InvalidArgumentException::class)
         ;
     });
@@ -82,7 +82,7 @@ describe('Mixed Multipart Payload Edge Cases', function () {
         Http::mock('POST')->url('/overwrite')->respondWithStatus(200)->register();
         $tempFile = Http::getTestingHandler()->createTempFile('test.txt', 'content');
 
-        Http::request()
+        Http::client()
             ->withFile('document', $tempFile)
             ->withMultipart(['document' => 'overwritten text'])
             ->post('/overwrite')
@@ -99,7 +99,7 @@ describe('Mixed Multipart Payload Edge Cases', function () {
         $file1 = Http::getTestingHandler()->createTempFile('f1.txt', 'one');
         $file2 = Http::getTestingHandler()->createTempFile('f2.csv', 'two');
 
-        Http::request()
+        Http::client()
             ->withFiles([
                 'simple' => $file1,
                 'complex' => ['path' => $file2, 'name' => 'custom.csv', 'type' => 'text/csv'],
@@ -148,7 +148,7 @@ describe('Mixed Multipart Payload Edge Cases', function () {
             }
         };
 
-        Http::request()
+        Http::client()
             ->withFile('resume', $uploadedFile)
             ->post('/uploaded-file')
             ->wait()

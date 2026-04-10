@@ -33,9 +33,9 @@ describe('Server-Sent Events Features', function () {
         $events = [];
 
         await(
-            Http::request()
+            Http::client()
                 ->sse('/sse-stream')
-                ->reconnectWith(new SSEReconnectConfig(
+                ->withReconnectConfig(new SSEReconnectConfig(
                     maxAttempts: 2,
                     initialDelay: 0.01,
                 ))
@@ -63,9 +63,9 @@ describe('Server-Sent Events Features', function () {
         $events = [];
 
         await(
-            Http::request()
+            Http::client()
                 ->sse('/sse-reconnect')
-                ->reconnectWith(new SSEReconnectConfig(
+                ->withReconnectConfig(new SSEReconnectConfig(
                     maxAttempts: 2,
                     initialDelay: 0.01,
                 ))
@@ -103,9 +103,9 @@ describe('Server-Sent Events Features', function () {
         $completed = new Promise();
 
         await(
-            Http::request()
+            Http::client()
                 ->sse('/mid-stream-drop')
-                ->reconnectWith(new SSEReconnectConfig(
+                ->withReconnectConfig(new SSEReconnectConfig(
                     maxAttempts: 3,
                     initialDelay: 0.01
                 ))
@@ -138,7 +138,7 @@ describe('Server-Sent Events Features', function () {
         $completed = new Promise();
 
         await(
-            Http::request()
+            Http::client()
                 ->sse('/periodic')
                 ->onEvent(function (SSEEvent $event) use (&$events, $completed) {
                     $events[] = $event;
@@ -176,9 +176,9 @@ describe('Server-Sent Events Features', function () {
         $completed = new Promise();
 
         await(
-            Http::request()
+            Http::client()
                 ->sse($url)
-                ->reconnectWith(new SSEReconnectConfig(
+                ->withReconnectConfig(new SSEReconnectConfig(
                     enabled: true,
                     initialDelay: 5.0,
                     onReconnect: function () use (&$reconnectTimings, $startTime) {
@@ -213,9 +213,9 @@ describe('Server-Sent Events Features', function () {
             initialDelay: 0.01,
         );
 
-        $promise = Http::request()
+        $promise = Http::client()
             ->sse($url)
-            ->reconnectWith($config)
+            ->withReconnectConfig($config)
             ->connect()
         ;
 
@@ -234,7 +234,7 @@ describe('Server-Sent Events Features', function () {
         ;
 
         $count = 0;
-        $promise = Http::request()
+        $promise = Http::client()
             ->sse($url)
             ->onEvent(function () use (&$count) {
                 $count++;
@@ -271,9 +271,9 @@ describe('Server-Sent Events Features', function () {
         $completed = new Promise();
 
         await(
-            Http::request()
+            Http::client()
                 ->sse($url)
-                ->reconnectWith(new SSEReconnectConfig(
+                ->withReconnectConfig(new SSEReconnectConfig(
                     maxAttempts: 5,
                     initialDelay: 0.01
                 ))
@@ -305,7 +305,7 @@ describe('Server-Sent Events Features', function () {
 
         $received = [];
         await(
-            Http::request()
+            Http::client()
                 ->sse($url)
                 ->onEvent(function (SSEEvent $event) use (&$received) {
                     $received[] = [

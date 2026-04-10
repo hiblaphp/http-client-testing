@@ -22,7 +22,7 @@ describe('Mock Header Matching Strategy and Validation', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->withHeader('X-Required', 'yes')
             ->withHeader('X-Unnecessary', 'ignored')
             ->get('/headers-1')
@@ -43,7 +43,7 @@ describe('Mock Header Matching Strategy and Validation', function () {
     it('fails to match if the header key exists but the value is different', function () {
         Http::mock('GET')->url('/headers-3')->expectHeader('X-Version', 'v1')->register();
 
-        expect(fn () => Http::request()->withHeader('X-Version', 'v2')->get('/headers-3')->wait())
+        expect(fn () => Http::client()->withHeader('X-Version', 'v2')->get('/headers-3')->wait())
             ->toThrow(UnexpectedRequestException::class)
         ;
     });
@@ -56,7 +56,7 @@ describe('Mock Header Matching Strategy and Validation', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->withHeader('X-API-Key', 'SECRET')
             ->get('/headers-4')
             ->wait()
@@ -76,7 +76,7 @@ describe('Mock Header Matching Strategy and Validation', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->accept('application/json')
             ->withHeader('X-Requested-With', 'XMLHttpRequest')
             ->post('/headers-5')
@@ -94,7 +94,7 @@ describe('Mock Header Matching Strategy and Validation', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->withHeader('X-Multi', ['val1', 'val2'])
             ->get('/headers-6')
             ->wait()

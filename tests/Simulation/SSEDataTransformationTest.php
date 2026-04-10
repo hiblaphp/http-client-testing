@@ -26,7 +26,7 @@ describe('SSE Mock Data Transformations', function () {
         $receivedData = null;
 
         Http::sse('/sse-json')
-            ->dataFormat(SSEDataFormat::DecodedJson)
+            ->withDataFormat(SSEDataFormat::DecodedJson)
             ->onEvent(function ($data) use (&$receivedData) {
                 $receivedData = $data;
             })
@@ -52,7 +52,7 @@ describe('SSE Mock Data Transformations', function () {
         $receivedArray = null;
 
         Http::sse('/sse-array')
-            ->dataFormat(SSEDataFormat::Array)
+            ->withDataFormat(SSEDataFormat::Array)
             ->onEvent(function ($array) use (&$receivedArray) {
                 $receivedArray = $array;
             })
@@ -80,7 +80,7 @@ describe('SSE Mock Data Transformations', function () {
         $numbers = [];
 
         Http::sse('/sse-map')
-            ->dataFormat(SSEDataFormat::Raw)
+            ->withDataFormat(SSEDataFormat::Raw)
             ->map(fn ($raw) => ((int)$raw) * 2)
             ->onEvent(function ($val) use (&$numbers) {
                 $numbers[] = $val;

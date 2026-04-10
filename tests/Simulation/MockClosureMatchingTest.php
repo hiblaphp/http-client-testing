@@ -64,7 +64,7 @@ describe('Mock Closure Matching', function () {
             expect(true)->toBeTrue();
         }
 
-        $response = await(Http::request()->withHeader('X-Custom-Auth', '1')->get('https://api.test.com/secure/data'));
+        $response = await(Http::client()->withHeader('X-Custom-Auth', '1')->get('https://api.test.com/secure/data'));
 
         expect($response->status())->toBe(200);
     });

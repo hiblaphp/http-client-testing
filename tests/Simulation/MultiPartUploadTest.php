@@ -26,7 +26,7 @@ describe('Mocked Multipart Uploads', function () {
         file_put_contents($tempFile, 'fake binary png data');
 
         $response = await(
-            Http::request()
+            Http::client()
                 ->withMultipart([
                     'user_id' => '404',
                     'type' => 'profile_picture',

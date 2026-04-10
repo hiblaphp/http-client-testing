@@ -18,7 +18,7 @@ afterEach(function () {
 describe('Request Class Configuration', function () {
 
     it('sets basic options like timeout and user agent', function () {
-        Http::request()
+        Http::client()
             ->timeout(15)
             ->connectTimeout(5)
             ->withUserAgent('MyTestAgent/1.0')
@@ -35,18 +35,18 @@ describe('Request Class Configuration', function () {
     });
 
     it('configures redirects', function () {
-        Http::request()->redirects(false)->get('/test')->wait();
+        Http::client()->redirects(false)->get('/test')->wait();
         $options1 = Http::getLastRequest()->getOptions();
         expect($options1[CURLOPT_FOLLOWLOCATION])->toBeFalse();
 
-        Http::request()->redirects(true, 10)->get('/test')->wait();
+        Http::client()->redirects(true, 10)->get('/test')->wait();
         $options2 = Http::getLastRequest()->getOptions();
         expect($options2[CURLOPT_FOLLOWLOCATION])->toBeTrue();
         expect($options2[CURLOPT_MAXREDIRS])->toBe(10);
     });
 
     it('configures SSL verification', function () {
-        Http::request()->verifySSL(false)->get('/test')->wait();
+        Http::client()->verifySSL(false)->get('/test')->wait();
         $options = Http::getLastRequest()->getOptions();
 
         expect($options[CURLOPT_SSL_VERIFYPEER])->toBeFalse();
@@ -54,10 +54,10 @@ describe('Request Class Configuration', function () {
     });
 
     it('configures HTTP protocol version', function () {
-        Http::request()->http1()->get('/test')->wait();
+        Http::client()->http1()->get('/test')->wait();
         expect(Http::getLastRequest()->getOptions()[CURLOPT_HTTP_VERSION])->toBe(CURL_HTTP_VERSION_1_1);
 
-        Http::request()->http2()->get('/test')->wait();
+        Http::client()->http2()->get('/test')->wait();
         expect(Http::getLastRequest()->getOptions()[CURLOPT_HTTP_VERSION])->toBe(CURL_HTTP_VERSION_2TLS);
     });
 });
@@ -65,7 +65,7 @@ describe('Request Class Configuration', function () {
 describe('Request Body Helpers', function () {
 
     it('correctly sets a raw string body', function () {
-        Http::request()->body('<xml>data</xml>')->contentType('application/xml')->post('/test')->wait();
+        Http::client()->body('<xml>data</xml>')->contentType('application/xml')->post('/test')->wait();
 
         $request = Http::getLastRequest();
         expect($request->getBody())->toBe('<xml>data</xml>');
@@ -73,7 +73,7 @@ describe('Request Body Helpers', function () {
     });
 
     it('correctly sets a JSON body', function () {
-        Http::request()->withJson(['user' => 'test'])->post('/test')->wait();
+        Http::client()->withJson(['user' => 'test'])->post('/test')->wait();
 
         $request = Http::getLastRequest();
         expect($request->getBody())->toBe(json_encode(['user' => 'test']));
@@ -81,7 +81,7 @@ describe('Request Body Helpers', function () {
     });
 
     it('correctly sets a URL-encoded form body', function () {
-        Http::request()->withForm(['user' => 'test', 'pass' => '123'])->post('/test')->wait();
+        Http::client()->withForm(['user' => 'test', 'pass' => '123'])->post('/test')->wait();
 
         $request = Http::getLastRequest();
         expect($request->getBody())->toBe('user=test&pass=123');
@@ -92,13 +92,13 @@ describe('Request Body Helpers', function () {
 describe('Authentication Methods', function () {
 
     it('configures a bearer token', function () {
-        Http::request()->withToken('my-secret-token')->get('/test')->wait();
+        Http::client()->withToken('my-secret-token')->get('/test')->wait();
         Http::assertBearerTokenSent('my-secret-token');
         expect(true)->toBeTrue();
     });
 
     it('configures basic authentication', function () {
-        Http::request()->withBasicAuth('user', 'pass')->get('/test')->wait();
+        Http::client()->withBasicAuth('user', 'pass')->get('/test')->wait();
         $options = Http::getLastRequest()->getOptions();
 
         expect($options[CURLOPT_HTTPAUTH])->toBe(CURLAUTH_BASIC);
@@ -106,7 +106,7 @@ describe('Authentication Methods', function () {
     });
 
     it('configures digest authentication', function () {
-        Http::request()->withDigestAuth('user', 'pass')->get('/test')->wait();
+        Http::client()->withDigestAuth('user', 'pass')->get('/test')->wait();
         $options = Http::getLastRequest()->getOptions();
 
         expect($options[CURLOPT_HTTPAUTH])->toBe(CURLAUTH_DIGEST);
@@ -117,13 +117,13 @@ describe('Authentication Methods', function () {
 describe('Cookie Helpers', function () {
 
     it('adds a single cookie via withCookie', function () {
-        Http::request()->withCookie('name', 'value')->get('/test')->wait();
+        Http::client()->withCookie('name', 'value')->get('/test')->wait();
         Http::assertHeaderSent('Cookie', 'name=value');
         expect(true)->toBeTrue();
     });
 
     it('chains multiple cookies correctly', function () {
-        Http::request()
+        Http::client()
             ->withCookie('c1', 'v1')
             ->withCookie('c2', 'v2')
             ->get('/test')
@@ -138,7 +138,7 @@ describe('Cookie Helpers', function () {
 describe('Interceptors', function () {
 
     it('applies request interceptors before sending', function () {
-        Http::request()
+        Http::client()
             ->interceptRequest(function (Request $request) {
                 return $request->withHeader('X-Interceptor', 'Applied');
             })
@@ -151,7 +151,7 @@ describe('Interceptors', function () {
     });
 
     it('applies response interceptors after receiving', function () {
-        $response = Http::request()
+        $response = Http::client()
             ->interceptResponse(function (Response $response) {
                 return $response->withHeader('X-Response-Interceptor', 'Modified');
             })

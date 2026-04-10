@@ -20,7 +20,7 @@ describe('URI Template Mocking Integration', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->withUrlParameter('id', 123)
             ->get('https://api.example.com/users/{id}/profile')
             ->wait()
@@ -37,7 +37,7 @@ describe('URI Template Mocking Integration', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->withUrlParameter('query', 'hello world')
             ->get('https://api.example.com/search/{query}')
             ->wait()
@@ -53,7 +53,7 @@ describe('URI Template Mocking Integration', function () {
             ->register()
         ;
 
-        $response = Http::request()
+        $response = Http::client()
             ->withUrlParameter('path', 'deep/nested/file.txt')
             ->get('https://api.example.com/files/{+path}')
             ->wait()
