@@ -1,19 +1,9 @@
 # HTTP Client Testing
 
-<p align="center">
-  <a href="https://packagist.org/packages/hiblaphp/http-client-testing">
-    <img src="https://img.shields.io/packagist/v/hiblaphp/http-client-testing.svg?style=flat-square" alt="Latest Version">
-  </a>
-  <a href="https://packagist.org/packages/hiblaphp/http-client-testing">
-    <img src="https://img.shields.io/packagist/dt/hiblaphp/http-client-testing.svg?style=flat-square" alt="Total Downloads">
-  </a>
-  <a href="https://github.com/hiblaphp/http-client-testing/blob/main/LICENSE">
-    <img src="https://img.shields.io/packagist/l/hiblaphp/http-client-testing.svg?style=flat-square" alt="License">
-  </a>
-  <a href="https://github.com/hiblaphp/http-client-testing/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/hiblaphp/http-client-testing/tests.yml?branch=main&style=flat-square" alt="Build Status">
-  </a>
-</p>
+[![Latest Release](https://img.shields.io/github/release/hiblaphp/http-client-testing.svg?style=flat-square)](https://github.com/hiblaphp/http-client-testing/releases)
+[![Tests](https://github.com/hiblaphp/http-client-testing/actions/workflows/test.yml/badge.svg)](https://github.com/hiblaphp/http-client-testing/actions/workflows/test.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/hiblaphp/http-client-testing.svg?style=flat-square)](https://packagist.org/packages/hiblaphp/http-client-testing)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 
