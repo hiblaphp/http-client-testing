@@ -131,6 +131,7 @@ class NetworkSimulator
      * Calculates delay based on configuration (supports both single values and arrays).
      *
      * @param mixed $delayConfig Delay configuration (float, int, or array)
+     *
      * @return float Calculated delay in seconds
      */
     private function calculateDelay($delayConfig): float
@@ -159,6 +160,7 @@ class NetworkSimulator
      *
      * @param float $min Minimum value
      * @param float $max Maximum value
+     *
      * @return float Random float between min and max
      */
     private function generateAggressiveRandomFloat(float $min, float $max): float

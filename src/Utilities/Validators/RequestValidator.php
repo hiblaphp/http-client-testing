@@ -8,6 +8,7 @@ class RequestValidator
 {
     /**
      * @param array<int, mixed> $curlOptions
+     *
      * @throws \InvalidArgumentException
      */
     public function validateNotSSERequest(array $curlOptions): void

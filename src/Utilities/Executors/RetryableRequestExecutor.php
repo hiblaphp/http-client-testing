@@ -24,7 +24,9 @@ class RetryableRequestExecutor
     use StreamTrait;
 
     private RequestMatcher $requestMatcher;
+
     private ResponseFactory $responseFactory;
+
     private RequestRecorder $requestRecorder;
 
     public function __construct(
@@ -41,6 +43,7 @@ class RetryableRequestExecutor
      * @param array<int|string, mixed> $curlOptions
      * @param list<MockedRequest> $mockedRequests
      * @param array{mock: MockedRequest, index: int}|null $initialMatch Optional initial match result
+     *
      * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     public function executeWithRetry(
@@ -79,6 +82,7 @@ class RetryableRequestExecutor
      * @param array<int|string, mixed> $curlOptions
      * @param array{mock: MockedRequest, index: int}|null $initialMatch Optional initial match result
      * @param list<MockedRequest> $mockedRequests
+     *
      * @return callable(int): MockedRequest
      */
     private function createMockProvider(

@@ -17,6 +17,7 @@ interface AssertsRequestsExtendedInterface
      *
      * @param string $method HTTP method
      * @param string $pattern URL pattern (fnmatch syntax)
+     *
      * @throws MockAssertionError
      */
     public function assertRequestMatchingUrl(string $method, string $pattern): void;
@@ -25,6 +26,7 @@ interface AssertsRequestsExtendedInterface
      * Assert that requests were made in a specific order.
      *
      * @param array<array{method: string, url: string}> $expectedSequence Expected sequence of requests
+     *
      * @throws MockAssertionError
      */
     public function assertRequestSequence(array $expectedSequence): void;
@@ -35,6 +37,7 @@ interface AssertsRequestsExtendedInterface
      * @param string $method HTTP method
      * @param string $url Request URL
      * @param int $index Request index in history
+     *
      * @throws MockAssertionError
      */
     public function assertRequestAtIndex(string $method, string $url, int $index): void;
@@ -43,6 +46,7 @@ interface AssertsRequestsExtendedInterface
      * Assert that exactly one request was made to a URL.
      *
      * @param string $url Request URL
+     *
      * @throws MockAssertionError
      */
     public function assertSingleRequestTo(string $url): void;
@@ -52,6 +56,7 @@ interface AssertsRequestsExtendedInterface
      *
      * @param string $method HTTP method
      * @param string $url Request URL
+     *
      * @throws MockAssertionError
      */
     public function assertRequestNotMade(string $method, string $url): void;
@@ -61,6 +66,7 @@ interface AssertsRequestsExtendedInterface
      *
      * @param string $url Request URL
      * @param int $maxCount Maximum allowed count
+     *
      * @throws MockAssertionError
      */
     public function assertRequestCountTo(string $url, int $maxCount): void;
@@ -69,6 +75,7 @@ interface AssertsRequestsExtendedInterface
      * Get all requests to a specific URL.
      *
      * @param string $url Request URL
+     *
      * @return array<int, RecordedRequest>
      */
     public function getRequestsTo(string $url): array;
@@ -77,6 +84,7 @@ interface AssertsRequestsExtendedInterface
      * Get all requests using a specific method.
      *
      * @param string $method HTTP method
+     *
      * @return array<int, RecordedRequest>
      */
     public function getRequestsByMethod(string $method): array;
@@ -85,6 +93,7 @@ interface AssertsRequestsExtendedInterface
      * Dump all requests with a specific method.
      *
      * @param string $method HTTP method
+     *
      * @return void
      */
     public function dumpRequestsByMethod(string $method): void;

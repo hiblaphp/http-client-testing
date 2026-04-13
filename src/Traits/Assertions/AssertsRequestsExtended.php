@@ -192,6 +192,7 @@ trait AssertsRequestsExtended
      * Get all requests to a specific URL.
      *
      * @param string $url Request URL
+     *
      * @return array<int, RecordedRequest>
      */
     public function getRequestsTo(string $url): array
@@ -211,6 +212,7 @@ trait AssertsRequestsExtended
      * Get all requests using a specific method.
      *
      * @param string $method HTTP method
+     *
      * @return array<int, RecordedRequest>
      */
     public function getRequestsByMethod(string $method): array
@@ -230,6 +232,7 @@ trait AssertsRequestsExtended
      * Dump all requests with a specific method.
      *
      * @param string $method HTTP method
+     *
      * @return void
      */
     public function dumpRequestsByMethod(string $method): void

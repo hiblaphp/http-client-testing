@@ -29,6 +29,7 @@ class UnexpectedRequestException extends MockException
 
     /**
      * Create exception with detailed mismatch information.
+     *
      * @param array<int|string, mixed> $options
      * @param array<MockedRequest> $availableMocks
      */
@@ -68,6 +69,7 @@ class UnexpectedRequestException extends MockException
 
     /**
      * Adds lines detailing the request body (if present) to the message lines.
+     *
      * @param string[] $lines
      * @param array<int|string, mixed> $options
      */
@@ -88,6 +90,7 @@ class UnexpectedRequestException extends MockException
 
     /**
      * Adds lines detailing the request headers (if present) to the message lines.
+     *
      * @param string[] $lines
      * @param array<int|string, mixed> $options
      */
@@ -105,6 +108,7 @@ class UnexpectedRequestException extends MockException
 
     /**
      * Adds lines detailing the available mocks and their expectations to the message lines.
+     *
      * @param string[] $lines
      * @param array<MockedRequest> $availableMocks
      */
@@ -125,6 +129,7 @@ class UnexpectedRequestException extends MockException
 
     /**
      * Adds lines detailing a single mock's expectations to the message lines.
+     *
      * @param string[] $lines
      * @param MockedRequest $mock
      */

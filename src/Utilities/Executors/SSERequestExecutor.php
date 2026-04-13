@@ -15,7 +15,9 @@ use Hibla\Promise\Interfaces\PromiseInterface;
 class SSERequestExecutor
 {
     private RequestMatcher $requestMatcher;
+
     private ResponseFactory $responseFactory;
+
     private RequestRecorder $requestRecorder;
 
     public function __construct(
@@ -33,6 +35,7 @@ class SSERequestExecutor
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
      * @param mixed $reconnectConfig
+     *
      * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
      */
     public function execute(
@@ -98,6 +101,7 @@ class SSERequestExecutor
     /**
      * @param array{mock: MockedRequest, index: int} $match
      * @param list<MockedRequest> $mockedRequests
+     *
      * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
      */
     private function handleMatchedSSE(
@@ -127,6 +131,7 @@ class SSERequestExecutor
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
      * @param mixed $reconnectConfig
+     *
      * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
      */
     private function handleNoMatch(
@@ -163,6 +168,7 @@ class SSERequestExecutor
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
      * @param array{mock: MockedRequest, index: int}|null $initialMatch
+     *
      * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
      */
     private function executeWithRetry(
@@ -256,6 +262,7 @@ class SSERequestExecutor
 
     /**
      * @param array<int, mixed> $curlOptions
+     *
      * @return array<int, mixed>
      */
     private function addLastEventId(array $curlOptions, ?string $lastEventId): array

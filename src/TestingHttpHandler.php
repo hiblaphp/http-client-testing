@@ -422,6 +422,7 @@ class TestingHttpHandler extends HttpHandler implements
      * Stream data from a URL with chunk callbacks.
      *
      * @param array<int|string, mixed> $options
+     *
      * @return PromiseInterface<StreamingResponseInterface>
      */
     public function stream(string $url, array $options = [], ?callable $onChunk = null): PromiseInterface
@@ -476,6 +477,7 @@ class TestingHttpHandler extends HttpHandler implements
      * @param string|null $destination The destination path (auto-generated if null).
      * @param array<int|string, mixed> $options
      * @param (callable(\Hibla\HttpClient\ValueObjects\DownloadProgress): void)|null $onProgress
+     *
      * @return PromiseInterface<array{file: string, status: int, headers: array<mixed>, protocol_version: string|null, size: int|false}>
      */
     public function download(string $url, ?string $destination = null, array $options = [], ?callable $onProgress = null): PromiseInterface
@@ -510,6 +512,7 @@ class TestingHttpHandler extends HttpHandler implements
      * Connect to a Server-Sent Events endpoint.
      *
      * @param array<int|string, mixed> $options
+     *
      * @return PromiseInterface<SSEResponseInterface>
      */
     public function sse(

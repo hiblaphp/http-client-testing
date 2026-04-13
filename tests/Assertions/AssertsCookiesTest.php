@@ -195,7 +195,8 @@ describe('AssertsCookies', function () {
         ;
 
         expect(fn () => $handler->assertCookieIsSecure('host_cookie'))
-            ->toThrow(AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class)
+        ;
     });
 
 });

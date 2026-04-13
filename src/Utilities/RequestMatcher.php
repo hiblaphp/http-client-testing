@@ -11,6 +11,7 @@ class RequestMatcher
     /**
      * @param array<int, MockedRequest> $mocks
      * @param array<int, mixed> $options
+     *
      * @return array{mock: MockedRequest, index: int}|null
      */
     public function findMatchingMock(array $mocks, string $method, string $url, array $options): ?array

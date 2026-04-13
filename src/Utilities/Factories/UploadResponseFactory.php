@@ -22,6 +22,7 @@ class UploadResponseFactory
     use NormalizeHeaderTrait;
 
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
 
     public function __construct(NetworkSimulationHandler $networkHandler)

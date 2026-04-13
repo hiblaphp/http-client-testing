@@ -365,6 +365,7 @@ trait AssertsDownloads
      * Get download destination for a specific URL.
      *
      * @param string $url The URL
+     *
      * @return string|null The destination path or null
      */
     public function getDownloadDestination(string $url): ?string

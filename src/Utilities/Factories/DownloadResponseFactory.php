@@ -23,6 +23,7 @@ class DownloadResponseFactory
     use NormalizeHeaderTrait;
 
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
 
     public function __construct(NetworkSimulationHandler $networkHandler)
@@ -38,6 +39,7 @@ class DownloadResponseFactory
      * @param string $destination The local path to save the file.
      * @param FileManager $fileManager Manager for tracking temporary files.
      * @param (callable(DownloadProgress): void)|null $onProgress Optional progress callback.
+     *
      * @return PromiseInterface<array{file: string, status: int, headers: array<string, string|array<string>>, size: int, protocol_version: string}>
      */
     public function create(

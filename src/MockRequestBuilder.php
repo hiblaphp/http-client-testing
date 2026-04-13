@@ -38,6 +38,7 @@ class MockRequestBuilder implements MockRequestBuilderInterface
     use BuildsRealisticSSEMocks;
 
     private TestingHttpHandler $handler;
+
     private MockedRequest $request;
 
     public function __construct(TestingHttpHandler $handler, string $method = '*')

@@ -54,6 +54,7 @@ class FileManager
      * Gets a path in the system temp directory.
      *
      * @param string|null $filename Optional filename
+     *
      * @return string Full path
      */
     public static function getTempPath(?string $filename = null): string
@@ -70,7 +71,9 @@ class FileManager
      * Creates a temporary directory.
      *
      * @param string $prefix Directory name prefix
+     *
      * @return string Path to created directory
+     *
      * @throws Exception If directory cannot be created
      */
     public function createTempDirectory(string $prefix = 'http_test_'): string
@@ -92,7 +95,9 @@ class FileManager
      *
      * @param string|null $filename Optional filename
      * @param string $content File content
+     *
      * @return string Path to created file
+     *
      * @throws Exception If file cannot be created
      */
     public function createTempFile(?string $filename = null, string $content = ''): string

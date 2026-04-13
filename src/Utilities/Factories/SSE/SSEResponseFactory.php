@@ -17,7 +17,9 @@ use Throwable;
 class SSEResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
+
     private PeriodicSSEEmitter $periodicEmitter;
 
     public function __construct(NetworkSimulationHandler $networkHandler)

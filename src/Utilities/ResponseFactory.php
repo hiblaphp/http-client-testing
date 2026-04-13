@@ -26,12 +26,19 @@ use Hibla\Promise\Interfaces\PromiseInterface;
 class ResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
+
     private StandardResponseFactory $standardFactory;
+
     private RetryableResponseFactory $retryableFactory;
+
     private StreamingResponseFactory $streamingFactory;
+
     private DownloadResponseFactory $downloadFactory;
+
     private SSEResponseFactory $sseFactory;
+
     private RetryableSSEResponseFactory $retryableSSEFactory;
+
     private UploadResponseFactory $uploadFactory;
 
     public function __construct(

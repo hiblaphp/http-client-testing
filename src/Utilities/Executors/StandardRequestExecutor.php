@@ -20,10 +20,15 @@ use Hibla\Promise\Interfaces\PromiseInterface;
 class StandardRequestExecutor
 {
     private RequestMatcher $requestMatcher;
+
     private CookieManager $cookieManager;
+
     private RequestRecorder $requestRecorder;
+
     private RequestValidator $validator;
+
     private RetryableRequestExecutor $retryExecutor;
+
     private ResponseTypeHandler $responseTypeHandler;
 
     public function __construct(
@@ -52,6 +57,7 @@ class StandardRequestExecutor
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
      * @param (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>)|null $parentSendRequest
+     *
      * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     public function execute(
@@ -119,6 +125,7 @@ class StandardRequestExecutor
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
      * @param (callable(string, array<int|string, mixed>, ?RetryConfig): PromiseInterface<Response>)|null $parentSendRequest
+     *
      * @return PromiseInterface<Response>
      */
     private function handleNoMatch(
@@ -150,6 +157,7 @@ class StandardRequestExecutor
     /**
      * @param PromiseInterface<Response|StreamingResponse|array<string, mixed>> $promise
      * @param array<int|string, mixed> $curlOptions
+     *
      * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     private function applyPostProcessing(
@@ -191,6 +199,7 @@ class StandardRequestExecutor
      * @param array<int|string, mixed> $curlOptions
      * @param array{mock: MockedRequest, index: int} $matchedMock
      * @param list<MockedRequest> $mockedRequests
+     *
      * @return PromiseInterface<Response|StreamingResponse|array<string, mixed>>
      */
     private function executeMockedRequest(

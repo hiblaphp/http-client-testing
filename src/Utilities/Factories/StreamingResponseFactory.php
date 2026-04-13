@@ -19,6 +19,7 @@ use function Hibla\delay;
 class StreamingResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
 
     public function __construct(NetworkSimulationHandler $networkHandler)

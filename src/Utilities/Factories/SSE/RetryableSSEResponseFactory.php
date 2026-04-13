@@ -24,7 +24,9 @@ use function Hibla\delay;
 class RetryableSSEResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
+
     private PeriodicSSEEmitter $periodicEmitter;
 
     public function __construct(NetworkSimulationHandler $networkHandler)
@@ -223,6 +225,7 @@ class RetryableSSEResponseFactory
 
     /**
      * @param array{should_fail: bool, error_message?: string} $networkConditions
+     *
      * @return array{is_handshake_failure: bool, is_retryable: bool, error_message: string, exception: Exception|null}
      */
     private function evaluateAttempt(

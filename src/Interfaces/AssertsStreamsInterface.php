@@ -13,6 +13,7 @@ interface AssertsStreamsInterface
      * Assert that a streaming request was made.
      *
      * @param string $url The URL that was streamed
+     *
      * @throws MockAssertionError
      */
     public function assertStreamMade(string $url): void;
@@ -21,6 +22,7 @@ interface AssertsStreamsInterface
      * Assert that a streaming request was made with a chunk callback.
      *
      * @param string $url The URL that was streamed
+     *
      * @throws MockAssertionError
      */
     public function assertStreamWithCallback(string $url): void;
@@ -30,6 +32,7 @@ interface AssertsStreamsInterface
      *
      * @param string $url The URL that was streamed
      * @param array<string, string> $expectedHeaders Expected headers
+     *
      * @throws MockAssertionError
      */
     public function assertStreamWithHeaders(string $url, array $expectedHeaders): void;
@@ -39,6 +42,7 @@ interface AssertsStreamsInterface
      *
      * @param string $url The URL that was streamed
      * @param string $method Expected HTTP method
+     *
      * @throws MockAssertionError
      */
     public function assertStreamWithMethod(string $url, string $method): void;
@@ -54,6 +58,7 @@ interface AssertsStreamsInterface
      * Assert a specific number of streaming requests were made.
      *
      * @param int $expected Expected number of streams
+     *
      * @throws MockAssertionError
      */
     public function assertStreamCount(int $expected): void;
@@ -83,6 +88,7 @@ interface AssertsStreamsInterface
      * Check if a stream request has a callback.
      *
      * @param RecordedRequest $request The request to check
+     *
      * @return bool
      */
     public function streamHasCallback(RecordedRequest $request): bool;

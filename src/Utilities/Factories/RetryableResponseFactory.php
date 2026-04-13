@@ -20,6 +20,7 @@ use function Hibla\delay;
 class RetryableResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
 
     public function __construct(NetworkSimulationHandler $networkHandler)
@@ -129,6 +130,7 @@ class RetryableResponseFactory
 
     /**
      * @param array{should_fail: bool, error_message?: string} $networkConditions
+     *
      * @return array{should_fail: bool, is_retryable: bool, error_message: string}
      */
     private function evaluateAttempt(

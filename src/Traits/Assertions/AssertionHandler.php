@@ -25,7 +25,9 @@ trait AssertionHandler
      * Fail an assertion - uses PHPUnit if available, otherwise throws exception.
      *
      * @param string $message
+     *
      * @return never
+     *
      * @throws MockAssertionError
      */
     protected function failAssertion(string $message): void

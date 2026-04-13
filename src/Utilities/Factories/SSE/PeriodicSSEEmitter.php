@@ -166,15 +166,15 @@ class PeriodicSSEEmitter
     /**
       * Sets up a finite stream from a predefined list of events.
       *
-      * @param array<string, mixed> $config
-      * @param MockedRequest $mock
-      * @param callable|null $onEvent
-      * @param callable|null $onError
-      * @param float $interval
-      * @param float $jitter
-      * @param string|null $periodicTimerId
-      * @param SSEResponse $sseResponse
-      * @param callable|null $onMidStreamError
+       * @param array<string, mixed> $config
+       * @param MockedRequest $mock
+       * @param callable|null $onEvent
+       * @param callable|null $onError
+       * @param float $interval
+       * @param float $jitter
+       * @param string|null $periodicTimerId
+       * @param SSEResponse $sseResponse
+       * @param callable|null $onMidStreamError
       *
       * @param-out string $periodicTimerId
       */

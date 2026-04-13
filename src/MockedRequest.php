@@ -358,6 +358,7 @@ class MockedRequest
      * @param string $method HTTP method
      * @param string $url Request URL
      * @param array<int|string, mixed> $options cURL options
+     *
      * @return bool True if matches
      */
     public function matches(string $method, string $url, array $options): bool
@@ -418,6 +419,7 @@ class MockedRequest
      *
      * @param string $pattern URL pattern
      * @param string $url URL to match
+     *
      * @return bool True if matches
      */
     private function urlMatches(string $pattern, string $url): bool
@@ -652,6 +654,7 @@ class MockedRequest
      * Extracts headers from cURL options.
      *
      * @param array<int|string, mixed> $options cURL options
+     *
      * @return array<string, string> Extracted headers
      */
     private function extractHeaders(array $options): array
@@ -708,6 +711,7 @@ class MockedRequest
      * Creates a MockedRequest from an array representation.
      *
      * @param array<string, mixed> $data Array data
+     *
      * @return self MockedRequest instance
      */
     public static function fromArray(array $data): self

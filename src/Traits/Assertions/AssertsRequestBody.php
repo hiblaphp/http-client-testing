@@ -238,6 +238,7 @@ trait AssertsRequestBody
      *
      * @param array<mixed> $array Array to check
      * @param array<mixed> $expected Expected key-value pairs
+     *
      * @return bool
      */
     private function arrayContains(array $array, array $expected): bool
@@ -264,6 +265,7 @@ trait AssertsRequestBody
      *
      * @param array<mixed> $json JSON
      * @param string $path Dot notation path
+     *
      * @return mixed
      */
     private function getJsonPath(array $json, string $path): mixed

@@ -457,6 +457,7 @@ trait BuildsSSERetrySequences
      * Helper method to create an SSE failure mock.
      *
      * @param string $error Error message
+     *
      * @return MockedRequest
      */
     protected function createSSEFailureMock(string $error): MockedRequest

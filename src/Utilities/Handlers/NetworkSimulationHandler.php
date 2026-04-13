@@ -10,6 +10,7 @@ use Hibla\HttpClient\Testing\Utilities\NetworkSimulator;
 class NetworkSimulationHandler
 {
     private NetworkSimulator $networkSimulator;
+
     private ?TestingHttpHandler $handler;
 
     public function __construct(

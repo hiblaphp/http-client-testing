@@ -54,6 +54,7 @@ class CookieManager
      * Creates a new in-memory cookie jar.
      *
      * @param string $name Name for the jar
+     *
      * @return CookieJarInterface The created jar
      */
     public function createCookieJar(string $name = 'default'): CookieJarInterface
@@ -72,6 +73,7 @@ class CookieManager
      * Gets a cookie jar by name.
      *
      * @param string $name Jar name
+     *
      * @return CookieJarInterface|null The jar or null if not found
      */
     public function getCookieJar(string $name = 'default'): ?CookieJarInterface
@@ -83,6 +85,7 @@ class CookieManager
      * Sets the default cookie jar.
      *
      * @param CookieJarInterface $jar The jar to set as default
+     *
      * @return self
      */
     public function setDefaultCookieJar(CookieJarInterface $jar): self
@@ -118,6 +121,7 @@ class CookieManager
      * @param bool $httpOnly Whether cookie is HTTP only
      * @param string|null $sameSite SameSite attribute
      * @param string $jarName Name of jar to add to
+     *
      * @return self
      */
     public function addCookie(
@@ -155,6 +159,7 @@ class CookieManager
      *
      * @param array<string, string|array{value?: string, domain?: string, path?: string, expires?: int, secure?: bool, httpOnly?: bool, sameSite?: string}> $cookies Cookies to add
      * @param string $jarName Name of jar to add to
+     *
      * @return self
      */
     public function addCookies(array $cookies, string $jarName = 'default'): self
@@ -232,6 +237,7 @@ class CookieManager
      *
      * @param string $name Cookie name
      * @param string $jarName Jar name
+     *
      * @throws MockAssertionException If assertion fails
      */
     public function assertCookieExists(string $name, string $jarName = 'default'): void
@@ -256,6 +262,7 @@ class CookieManager
      * @param string $name Cookie name
      * @param string $expectedValue Expected value
      * @param string $jarName Jar name
+     *
      * @throws MockAssertionException If assertion fails
      */
     public function assertCookieValue(string $name, string $expectedValue, string $jarName = 'default'): void
@@ -283,6 +290,7 @@ class CookieManager
      *
      * @param string $name Cookie name
      * @param array<int|string, mixed> $curlOptions cURL options from the request
+     *
      * @throws MockAssertionException If assertion fails
      */
     public function assertCookieSent(string $name, array $curlOptions): void
@@ -324,6 +332,7 @@ class CookieManager
      * Gets cookie count in a jar.
      *
      * @param string $jarName Jar name
+     *
      * @return int Cookie count
      */
     public function getCookieCount(string $jarName = 'default'): int
@@ -337,6 +346,7 @@ class CookieManager
      * Clears all cookies from a jar.
      *
      * @param string $jarName Jar name
+     *
      * @return self
      */
     public function clearCookies(string $jarName = 'default'): self
@@ -439,6 +449,7 @@ class CookieManager
      * Creates a temporary cookie file.
      *
      * @param string $prefix Filename prefix
+     *
      * @return string Path to created file
      */
     public function createTempCookieFile(string $prefix = 'test_cookies_'): string

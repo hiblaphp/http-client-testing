@@ -18,6 +18,7 @@ use function Hibla\delay;
 class StandardResponseFactory
 {
     private NetworkSimulationHandler $networkHandler;
+
     private DelayCalculator $delayCalculator;
 
     public function __construct(NetworkSimulationHandler $networkHandler)
@@ -53,6 +54,7 @@ class StandardResponseFactory
 
     /**
      * @template TValue
+     *
      * @param Promise<TValue> $promise
      */
     private function executeWithNetworkSimulation(

@@ -128,7 +128,6 @@ trait AssertsStreams
 
     /**
      * Assert that no streaming requests were made.
-     *
      */
     public function assertNoStreamsMade(): void
     {
@@ -230,6 +229,7 @@ trait AssertsStreams
      * Check if a stream request has a callback.
      *
      * @param RecordedRequest $request The request to check
+     *
      * @return bool
      */
     public function streamHasCallback(RecordedRequest $request): bool

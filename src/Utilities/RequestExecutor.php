@@ -17,14 +17,21 @@ use Hibla\Promise\Interfaces\PromiseInterface;
 class RequestExecutor
 {
     private RequestMatcher $requestMatcher;
+
     private ResponseFactory $responseFactory;
+
     private FileManager $fileManager;
+
     private CookieManager $cookieManager;
+
     private RequestRecorder $requestRecorder;
 
     private StandardRequestExecutor $standardExecutor;
+
     private SSERequestExecutor $sseExecutor;
+
     private RequestValidator $validator;
+
     private ResponseTypeHandler $responseTypeHandler;
 
     public function __construct(
@@ -96,6 +103,7 @@ class RequestExecutor
      * @param list<MockedRequest> $mockedRequests
      * @param array<string, mixed> $globalSettings
      * @param mixed $reconnectConfig
+     *
      * @return PromiseInterface<\Hibla\HttpClient\SSE\SSEResponse>
      */
     public function executeSSE(
