@@ -90,7 +90,7 @@ Http::stopTesting();
 
 ## Requirements
 
-- PHP **8.3** or higher
+- PHP **8.4** or higher
 - `hiblaphp/http-client`
 
 ---
