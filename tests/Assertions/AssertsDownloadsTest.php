@@ -16,7 +16,7 @@ describe('AssertsDownloads', function () {
         $destination = $handler->createTempFile('test.txt');
         $handler->mock('GET')->url('https://example.com/file.txt')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -32,7 +32,7 @@ describe('AssertsDownloads', function () {
         $handler->mock('GET')->url('https://example.com/file.txt')->respondWithStatus(200)->register();
         $destination = $handler->createTempFile('auto_test.txt');
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -48,7 +48,7 @@ describe('AssertsDownloads', function () {
         $destination = $handler->createTempFile('test.txt');
         $handler->mock('GET')->url('https://example.com/file.txt')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -63,7 +63,7 @@ describe('AssertsDownloads', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
@@ -79,7 +79,7 @@ describe('AssertsDownloads', function () {
         $handler->mock('GET')->url('https://example.com/file.txt')->respondWithStatus(200)->register();
         $destination = $handler->createTempFile('fail_test.txt');
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -95,7 +95,7 @@ describe('AssertsDownloads', function () {
         $handler->mock('GET')->url('https://example.com/file1.txt')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/file2.txt')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->download('https://example.com/file1.txt', $handler->createTempFile('f1.txt'))->wait();
         $client->download('https://example.com/file2.txt', $handler->createTempFile('f2.txt'))->wait();
 
@@ -109,7 +109,7 @@ describe('AssertsDownloads', function () {
         $destination = $handler->createTempFile('test.txt');
         $handler->mock('GET')->url('https://example.com/file.txt')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -130,7 +130,7 @@ describe('AssertsDownloads', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -151,7 +151,7 @@ describe('AssertsDownloads', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -173,7 +173,7 @@ describe('AssertsDownloads', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -194,7 +194,7 @@ describe('AssertsDownloads', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->download('https://example.com/file.txt', $destination)
             ->wait()
@@ -210,7 +210,7 @@ describe('AssertsDownloads', function () {
         $destination = $handler->createTempFile('method_test.txt');
         $handler->mock('POST')->url('https://example.com/file.txt')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withMethod('POST')
             ->download('https://example.com/file.txt', $destination)
@@ -227,7 +227,7 @@ describe('AssertsDownloads', function () {
         $handler->mock('GET')->url('https://example.com/file1.txt')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/file2.txt')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->download('https://example.com/file1.txt', $handler->createTempFile('1.txt'))->wait();
         $client->download('https://example.com/file2.txt', $handler->createTempFile('2.txt'))->wait();
 
@@ -244,7 +244,7 @@ describe('AssertsDownloads', function () {
         $handler->mock('GET')->url('https://example.com/file1.txt')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://example.com/file2.txt')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->download('https://example.com/file1.txt', $handler->createTempFile('1.txt'))->wait();
         $client->download('https://example.com/file2.txt', $handler->createTempFile('2.txt'))->wait();
 

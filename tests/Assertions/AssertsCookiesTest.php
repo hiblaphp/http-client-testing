@@ -17,7 +17,7 @@ describe('AssertsCookies', function () {
 
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->useCookieJar($jar)
             ->get('https://example.com')
@@ -34,7 +34,7 @@ describe('AssertsCookies', function () {
 
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
@@ -54,7 +54,7 @@ describe('AssertsCookies', function () {
         $handler->mock('GET')->url('https://api.example.com/users')->respondWithStatus(200)->register();
         $handler->mock('GET')->url('https://other.com/users')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())
+        $client = new HttpClient()
             ->withHandler($handler)
             ->useCookieJar($jar)
         ;

@@ -18,7 +18,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->sse('https://example.com/events')
             ->connect()
@@ -34,7 +34,7 @@ describe('AssertsSSE', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
@@ -54,7 +54,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->sse('https://example.com/events')
             ->connect()
@@ -75,7 +75,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('Last-Event-ID', '12345')
             ->sse('https://example.com/events')
@@ -97,7 +97,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->sse('https://example.com/events')->connect()->wait();
         $client->sse('https://example.com/events')->connect()->wait();
 
@@ -115,7 +115,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->sse('https://example.com/events')->connect()->wait();
         $client->sse('https://example.com/events')->connect()->wait();
         $client->sse('https://example.com/events')->connect()->wait();
@@ -134,7 +134,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->sse('https://example.com/events')
             ->connect()
@@ -155,7 +155,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('Last-Event-ID', '123')
             ->sse('https://example.com/events')
@@ -177,7 +177,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('X-Custom', 'value')
             ->sse('https://example.com/events')
@@ -199,7 +199,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->sse('https://example.com/events')
             ->connect()
@@ -216,7 +216,7 @@ describe('AssertsSSE', function () {
         $handler->mock('GET')->url('https://example.com/events1')->respondWithSSE([])->register();
         $handler->mock('GET')->url('https://example.com/events2')->respondWithSSE([])->register();
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->sse('https://example.com/events1')->connect()->wait();
         $client->sse('https://example.com/events2')->connect()->wait();
 
@@ -231,7 +231,7 @@ describe('AssertsSSE', function () {
         $handler->mock('GET')->url('https://example.com/events1')->respondWithSSE([])->register();
         $handler->mock('GET')->url('https://example.com/events2')->respondWithSSE([])->register();
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->sse('https://example.com/events1')->connect()->wait();
         $client->sse('https://example.com/events2')->connect()->wait();
 
@@ -250,7 +250,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withToken('secret-token')
             ->sse('https://example.com/events')
@@ -272,7 +272,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
 
         $client->withHeader('Last-Event-ID', '1')
             ->sse('https://example.com/events')
@@ -300,7 +300,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->sse('https://example.com/events')
             ->connect()
@@ -321,7 +321,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->sse('https://example.com/events')->connect()->wait();
         $client->sse('https://example.com/events')->connect()->wait();
 
@@ -339,7 +339,7 @@ describe('AssertsSSE', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->sse('https://example.com/events')->connect()->wait();
         $client->sse('https://example.com/events')->connect()->wait();
 

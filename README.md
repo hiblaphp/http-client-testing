@@ -143,7 +143,7 @@ use Hibla\HttpClient\HttpClient;
 use Hibla\HttpClient\Testing\TestingHttpHandler;
 
 $handler = new TestingHttpHandler();
-$client  = (new HttpClient())->withHandler($handler);
+$client  = new HttpClient()->withHandler($handler);
 
 // Inject $client into the service under test
 $service = new UserService($client);
@@ -171,7 +171,7 @@ use Hibla\HttpClient\Testing\TestingHttpHandler;
 
 beforeEach(function () {
     $this->handler = new TestingHttpHandler();
-    $this->client  = (new HttpClient())->withHandler($this->handler);
+    $this->client  = new HttpClient()->withHandler($this->handler);
     $this->service = new UserService($this->client);
 });
 
@@ -952,7 +952,7 @@ Or in DI mode:
 $handler = new TestingHttpHandler();
 $handler->enablePassthrough();
 
-$client = (new HttpClient())->withHandler($handler);
+$client = new HttpClient()->withHandler($handler);
 ```
 
 ### How It Works
@@ -1531,7 +1531,7 @@ use Hibla\HttpClient\Testing\TestingHttpHandler;
 
 beforeEach(function () {
     $this->handler = new TestingHttpHandler();
-    $this->client  = (new HttpClient())->withHandler($this->handler);
+    $this->client  = new HttpClient()->withHandler($this->handler);
     $this->service = new UserService($this->client);
 });
 

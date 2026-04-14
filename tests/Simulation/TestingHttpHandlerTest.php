@@ -20,7 +20,7 @@ describe('Basic Mock Response Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://api.example.com/users')
             ->wait()
@@ -40,7 +40,7 @@ describe('Basic Mock Response Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->withJson(['title' => 'Test Post'])
             ->post('https://api.example.com/posts')
@@ -61,7 +61,7 @@ describe('Basic Mock Response Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com/text')
             ->wait()
@@ -83,7 +83,7 @@ describe('Delay Simulation Tests', function () {
         ;
 
         $start = microtime(true);
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://api.example.com/slow')
             ->wait()
@@ -106,7 +106,7 @@ describe('Delay Simulation Tests', function () {
         ;
 
         $start = microtime(true);
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://api.example.com/random-slow')
             ->wait()
@@ -129,7 +129,7 @@ describe('Delay Simulation Tests', function () {
         ;
 
         $start = microtime(true);
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://api.example.com/test')
             ->wait()
@@ -150,7 +150,7 @@ describe('Error Simulation Tests', function () {
             ->register()
         ;
 
-        expect(fn () => (new HttpClient())->withHandler($handler)->get('https://api.example.com/fail')->wait())
+        expect(fn () => new HttpClient()->withHandler($handler)->get('https://api.example.com/fail')->wait())
             ->toThrow(NetworkException::class)
         ;
     });
@@ -164,7 +164,7 @@ describe('Error Simulation Tests', function () {
             ->register()
         ;
 
-        expect(fn () => (new HttpClient())->withHandler($handler)->get('https://api.example.com/timeout')->wait())
+        expect(fn () => new HttpClient()->withHandler($handler)->get('https://api.example.com/timeout')->wait())
             ->toThrow(NetworkException::class)
         ;
     });
@@ -178,7 +178,7 @@ describe('Error Simulation Tests', function () {
             ->register()
         ;
 
-        expect(fn () => (new HttpClient())->withHandler($handler)->get('https://api.example.com/network-error')->wait())
+        expect(fn () => new HttpClient()->withHandler($handler)->get('https://api.example.com/network-error')->wait())
             ->toThrow(NetworkException::class)
         ;
     });
@@ -194,7 +194,7 @@ describe('Retry Sequence Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->retry(5, 0.01)
             ->get('https://api.example.com/retry')
@@ -215,7 +215,7 @@ describe('Retry Sequence Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->retry(5, 0.01)
             ->get('https://api.example.com/timeout-retry')
@@ -238,7 +238,7 @@ describe('Retry Sequence Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->retry(5, 0.01)
             ->get('https://api.example.com/sequence')
@@ -259,7 +259,7 @@ describe('Advanced Scenario Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->retry(5, 0.01)
             ->get('https://api.example.com/rate-limited')
@@ -282,7 +282,7 @@ describe('Advanced Scenario Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->retry(5, 0.01)
             ->get('https://api.example.com/improving')
@@ -307,7 +307,7 @@ describe('Network Simulation Tests', function () {
         $start = microtime(true);
 
         try {
-            (new HttpClient())->withHandler($handler)->get('https://api.example.com/test')->wait();
+            new HttpClient()->withHandler($handler)->get('https://api.example.com/test')->wait();
         } catch (Exception $e) {
             // expected
         }
@@ -327,7 +327,7 @@ describe('Network Simulation Tests', function () {
         ;
 
         $start = microtime(true);
-        (new HttpClient())->withHandler($handler)->get('https://api.example.com/test')->wait();
+        new HttpClient()->withHandler($handler)->get('https://api.example.com/test')->wait();
         $duration = microtime(true) - $start;
 
         expect($duration)->toBeLessThan(1.0);
@@ -347,7 +347,7 @@ describe('Header Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://api.example.com/headers')
             ->wait()
@@ -368,7 +368,7 @@ describe('Header Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->withToken('token123')
             ->get('https://api.example.com/auth')
@@ -386,7 +386,7 @@ describe('Request Recording Tests', function () {
         $handler->mock('GET')->url('https://api.example.com/test1')->respondWithStatus(200)->register();
         $handler->mock('POST')->url('https://api.example.com/test2')->respondWithStatus(200)->register();
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
         $client->get('https://api.example.com/test1')->wait();
         $client->post('https://api.example.com/test2')->wait();
 
@@ -404,7 +404,7 @@ describe('Request Recording Tests', function () {
 
         $handler->mock('GET')->url('https://api.example.com/test')->respondWithStatus(200)->register();
 
-        (new HttpClient())->withHandler($handler)->get('https://api.example.com/test')->wait();
+        new HttpClient()->withHandler($handler)->get('https://api.example.com/test')->wait();
 
         expect($handler->getRequestHistory())->toBeEmpty();
     });
@@ -421,7 +421,7 @@ describe('Persistent Mock Tests', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
 
         $client->get('https://api.example.com/persistent')->wait();
         $client->get('https://api.example.com/persistent')->wait();
@@ -443,7 +443,7 @@ describe('Download Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com/file.pdf')
             ->wait()
@@ -466,7 +466,7 @@ describe('URL Pattern Matching Tests', function () {
             ->register()
         ;
 
-        $client = (new HttpClient())->withHandler($handler);
+        $client = new HttpClient()->withHandler($handler);
 
         $res1 = $client->get('https://api.example.com/users/123')->wait();
         $res2 = $client->get('https://api.example.com/users/456')->wait();
@@ -488,7 +488,7 @@ describe('Cookie Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com/login')
             ->wait()
@@ -509,7 +509,7 @@ describe('Body Expectation Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->body('test data')
             ->post('https://api.example.com/data')
@@ -529,7 +529,7 @@ describe('Body Expectation Tests', function () {
             ->register()
         ;
 
-        $response = (new HttpClient())
+        $response = new HttpClient()
             ->withHandler($handler)
             ->withJson(['key' => 'value'])
             ->post('https://api.example.com/json')

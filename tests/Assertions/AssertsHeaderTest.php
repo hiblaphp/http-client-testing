@@ -10,7 +10,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('X-Custom', 'value')
             ->get('https://example.com')
@@ -26,7 +26,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('X-Custom', 'expected-value')
             ->get('https://example.com')
@@ -42,7 +42,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('X-Custom', 'actual-value')
             ->get('https://example.com')
@@ -58,7 +58,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->get('https://example.com')
             ->wait()
@@ -73,7 +73,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('X-Custom', 'value')
             ->get('https://example.com')
@@ -89,7 +89,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeaders([
                 'X-Custom-1' => 'value1',
@@ -109,7 +109,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withHeader('X-Request-Id', 'req-12345')
             ->get('https://example.com')
@@ -125,7 +125,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withToken('secret-token') // Built-in method to set "Authorization: Bearer ..."
             ->get('https://example.com')
@@ -141,7 +141,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('POST')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->contentType('application/json')
             ->post('https://example.com')
@@ -157,7 +157,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->accept('application/json')
             ->get('https://example.com')
@@ -173,7 +173,7 @@ describe('AssertsHeaders', function () {
         $handler = testingHttpHandler();
         $handler->mock('GET')->url('https://example.com')->respondWithStatus(200)->register();
 
-        (new HttpClient())
+        new HttpClient()
             ->withHandler($handler)
             ->withUserAgent('CustomAgent/1.0')
             ->get('https://example.com')
