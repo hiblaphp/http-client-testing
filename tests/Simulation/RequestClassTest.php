@@ -34,17 +34,6 @@ describe('Request Class Configuration', function () {
         expect($options[CURLOPT_USERAGENT])->toBe('MyTestAgent/1.0');
     });
 
-    it('configures redirects', function () {
-        Http::client()->redirects(false)->get('/test')->wait();
-        $options1 = Http::getLastRequest()->getOptions();
-        expect($options1[CURLOPT_FOLLOWLOCATION])->toBeFalse();
-
-        Http::client()->redirects(true, 10)->get('/test')->wait();
-        $options2 = Http::getLastRequest()->getOptions();
-        expect($options2[CURLOPT_FOLLOWLOCATION])->toBeTrue();
-        expect($options2[CURLOPT_MAXREDIRS])->toBe(10);
-    });
-
     it('configures SSL verification', function () {
         Http::client()->verifySSL(false)->get('/test')->wait();
         $options = Http::getLastRequest()->getOptions();

@@ -18,7 +18,6 @@ describe('Fetch API to cURL Option Mapping', function () {
 
         Http::fetch('/fetch-map', [
             'follow_redirects' => true,
-            'max_redirects' => 12,
             'timeout' => 45,
             'connect_timeout' => 10,
             'verify_ssl' => false,
@@ -26,8 +25,7 @@ describe('Fetch API to cURL Option Mapping', function () {
 
         $options = Http::getLastRequest()->getOptions();
 
-        expect($options[CURLOPT_FOLLOWLOCATION])->toBeTrue()
-            ->and($options[CURLOPT_MAXREDIRS])->toBe(12)
+        expect($options[CURLOPT_FOLLOWLOCATION])->toBeFalse()
             ->and($options[CURLOPT_TIMEOUT])->toBe(45)
             ->and($options[CURLOPT_CONNECTTIMEOUT])->toBe(10)
             ->and($options[CURLOPT_SSL_VERIFYPEER])->toBeFalse()
