@@ -128,7 +128,7 @@ describe('Interceptors', function () {
 
     it('applies request interceptors before sending', function () {
         Http::client()
-            ->interceptRequest(function (Request $request) {
+            ->withRequestInterceptor(function (Request $request) {
                 return $request->withHeader('X-Interceptor', 'Applied');
             })
             ->get('/test')
@@ -141,7 +141,7 @@ describe('Interceptors', function () {
 
     it('applies response interceptors after receiving', function () {
         $response = Http::client()
-            ->interceptResponse(function (Response $response) {
+            ->withResponseInterceptor(function (Response $response) {
                 return $response->withHeader('X-Response-Interceptor', 'Modified');
             })
             ->get('/test')
