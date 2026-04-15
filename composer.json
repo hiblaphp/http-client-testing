@@ -32,7 +32,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.4",
-        "hiblaphp/http-client": "*"
+        "hiblaphp/http-client": "^1.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0",
