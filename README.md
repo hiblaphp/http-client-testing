@@ -97,15 +97,24 @@ Http::stopTesting();
 
 ## Installation
 
->This library is currently in its Alpha development phase. You can install the library via Composer by explicitly allowing alpha stability:
+>This package is currently in **beta**. Before installing, ensure your `composer.json`
+allows beta releases:
 
-Install as a development dependency via Composer:
-
-```bash
-composer require --dev hiblaphp/http-client-testing
+```json
+{
+    "minimum-stability": "beta",
+    "prefer-stable": true
+}
 ```
 
-No additional service providers, configuration files, or boot steps are required. The plugin integrates with the HTTP client automatically once `Http::startTesting()` is called.
+```bash
+composer require hiblaphp/http-client-testing
+```
+
+**Requirements:**
+- PHP 8.4+ 
+
+No additional service providers, configuration files, or boot steps are required. The plugin integrates with the HTTP client automatically once `Http::startTesting()` is called if using the Http facade.
 
 ---
 
